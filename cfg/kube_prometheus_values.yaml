@@ -1,0 +1,99 @@
+## Create default rules for monitoring the cluster
+## Disable rules for unreachable components
+##
+defaultRules:
+  create: true
+  rules:
+    etcd: false
+    kubeScheduler: false
+
+## Disable component scraping for the kube controller manager, etcd, and kube-scheduler
+## These components are not reachable on EKS
+##
+kubeControllerManager:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+prometheusSpec:
+        
+prometheus:
+  prometheusSpec:
+    # containers:
+    # - name: 
+    #   env:
+    #   - name: OBJSTORE_CONFIG
+    #     valueFrom:
+    #       secretKeyRef:
+    #         key: object-store.yaml
+    #         name: thanos-gcs-config
+    #   - name: HTTPS_PROXY
+    #     value: "squid-b:3128"
+    storageSpec: 
+      volumeClaimTemplate:
+        metadata:
+          name: k8s-prometheus-volume
+        spec:
+          storageClassName: ebs-sc
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+    additionalScrapeConfigs:
+    - job_name: jenkins
+      metrics_path: '/prometheus'
+      static_configs:
+      - targets:
+        - 3.90.0.250:8080
+    - job_name: istiod
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+          - istio-system
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: istiod;http-monitoring
+    - job_name: envoy-stats
+      metrics_path: /stats/prometheus
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_container_port_name]
+        action: keep
+        regex: '.*-envoy-prom'
+alertmanager:
+  alertmanagerSpec:
+      storage: 
+        volumeClaimTemplate:
+          metadata:
+            name: k8s-alert-manager-volume
+          spec:
+            storageClassName: ebs-sc
+            accessModes: ["ReadWriteOnce"]
+            resources:
+                requests:
+                  storage: 10Gi
+grafana:
+  persistence:
+    type: pvc
+    enabled: true
+    storageClassName: ebs-sc
+    accessModes: ["ReadWriteOnce"]
+    size: 1Gi
+  service:
+    portName: http-service
+    port: 3000
+    targetPort: 3000
+  hosts:
+  - grafana.patrick-cloud.com
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      podAnnotations:
+        "sidecar.istio.io/inject": "false"  # Ensure Istio sidecar doesn't start in prometheus "create"
+  env:
+    web.external-url: https://localhost:9090/prometheus/
+    web.route-prefix: /

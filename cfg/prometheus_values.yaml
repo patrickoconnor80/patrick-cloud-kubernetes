@@ -1,0 +1,18 @@
+server:
+  # storageClass: ebs-gp2-sc
+  # accessModes:
+  # - ReadWriteOnce
+  # size: 10Gi
+  persistentVolume:
+    size: 8Gi
+    volumeName: prometheus-server-pv
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ebs-gp2-sc
+  extraArgs:
+    web.external-url: http://kubernetes.patrick-cloud.com/prometheus
+    web.route-prefix: /
+alertmanager:
+  persistence:
+    size: 2Gi
+    volumeName: prometheus-alert-manager-pv

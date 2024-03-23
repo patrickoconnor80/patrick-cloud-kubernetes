@@ -1,0 +1,6 @@
+external_services:
+  prometheus:
+      # Prometheus service name is "kube-prometheus-stack-prometheus" and is in the "monitoring" namespace
+      url: "http://kube-prometheus-stack-prometheus.monitoring:9090/"
+#   istio:
+#     istio_api_enabled: "false"

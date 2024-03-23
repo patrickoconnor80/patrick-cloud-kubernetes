@@ -1,0 +1,34 @@
+# https://github.com/apache/superset/blob/master/helm/superset/values.yaml
+
+# If you find it difficult to configure the ingress, simply set the enabled option to false.
+# you can access it via port-forward
+# `kubectl port-forward service/superset 8088:8088 --namespace apache-superset-dev`
+
+# remember to update the hosts name with your defined domain
+
+ingress:
+  enabled: true
+  annotations:
+    spec.ingressClassName: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  path: /
+  pathType: Prefix
+  hosts:
+    - kubernetes-superset.patrick-cloud.com
+  tls:
+    - secretName: superset-dev-tls
+      hosts:
+        - kubernetes-superset.patrick-cloud.com
+  extraHostsRaw: []
+
+supersetNode:
+  connections:
+    db_host: patrick-cloud-pipeline-rds-20240205213236720500000002.cw5fa03a1lce.us-east-1.rds.amazonaws.com
+    db_port: 5432
+    db_user: snowplow 
+    db_pass: "gbz}mNhCe})AZ<wo"
+    db_name: snowplow 
+
+postgresql:
+  enabled: false
