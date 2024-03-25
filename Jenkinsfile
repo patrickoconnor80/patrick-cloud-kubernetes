@@ -14,7 +14,7 @@ node {
                         sh "git config user.name patrickoconnor80"
                         //sh "git switch master"
                         sh "cat cfg/simple_app.yaml"
-                        sh "sed -i 's+raj80dockerid/test.*+raj80dockerid/test:${DOCKERTAG}+g' cfg/simple_app.yaml"
+                        sh "sed -i 's+patrickoconnor80/simple-app.*+patrickoconnor80/simple-app:${DOCKERTAG}+g' cfg/simple_app.yaml"
                         sh "cat cfg/simple_app.yaml"
                         sh "git add ."
                         sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
