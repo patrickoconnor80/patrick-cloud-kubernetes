@@ -6,13 +6,16 @@ do
     kubectl delete -f $ADDON_URL
 done
 
-kubectl delete -f ../temp_cfg/istio_dashboards_gateway.yaml
+kubectl delete -f ../cfg/istio_dashboards_gateway.yaml
 
 helm uninstall grafana -n monitoring
 helm uninstall prometheus -n monitoring
 helm uninstall istio-ingress -n istio-ingress
 helm uninstall istio-base -n istio-system
 helm uninstall istiod -n istio-system
+helm uninstall argo-cd -n argocd
 
-kubectl delete -f ../temp_cfg/namespaces.yaml
-kubectl delete -f ../temp_cfg/storage_class.yaml
+kubectl delete -f ../cfg/namespaces.yaml
+kubectl delete -f ../cfg/storage_class.yaml
+kubectl delete -f ../cfg/external_secrets.yaml
+kubectl delete -f ../cfg/storage_class.yaml

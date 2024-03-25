@@ -1,0 +1,6 @@
+configs:
+  params:
+    server:
+      domain: http://kubernetes.patrick-cloud.com
+      basehref: /argocd
+      insecure: true

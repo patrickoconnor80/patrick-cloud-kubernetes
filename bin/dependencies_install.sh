@@ -11,3 +11,7 @@ $ ./get_helm.sh
 curl -sL https://istio.io/downloadIstioctl | sh -
 export PATH=$HOME/.istioctl/bin:$PATH
 
+# Install AWSCli
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install

@@ -1,0 +1,6 @@
+clusterName: patrick-cloud-eks-cluster
+serviceAccount:
+  create: true
+  name: aws-lb-controller-sa
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::948065143262:role/patrick-cloud-eks-aws-lb-controller-sa-role

@@ -1,0 +1,79 @@
+persistence:
+  enabled: true
+  size: 2Gi
+  storageClassName: ebs-gp2-sc
+  accessModes:
+    - ReadWriteOnce
+  volumeName: grafana-pv
+  selectorLabels:
+    volume-name: grafana-pv
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      url: http://prometheus-server.monitoring.svc.cluster.local
+    - name: CloudWatch
+      type: cloudwatch
+      jsonData:
+        authType: default
+        defaultRegion: us-east-1
+    - name: Alertmanager
+      type: alertmanager
+      url: http://prometheus-alertmanager.monitoring.svc.cluster.local
+      access: proxy
+      jsonData:
+        implementation: prometheus
+        # Whether or not Grafana should send alert instances to this Alertmanager
+        handleGrafanaManagedAlerts: false
+      # optionally
+      # basicAuth: true
+      # basicAuthUser: my_user
+      # secureJsonData:
+      #   basicAuthPassword: test_password
+
+# Admin Username and Password set up through AWS Secrets Manager via external secrets
+# Key in AWS Secrets Manager: GRAFANA_CREDENTIALS
+admin:
+  existingSecret: grafana-credentials
+  userKey: grafana_username
+  passwordKey: grafana_password
+grafana.ini:
+  server:
+    domain: kubernetes.patrick-cloud.com
+    protocol: http
+    root_url: "%(protocol)s://%(domain)s/grafana/"
+    # cert_file: /etc/ssl/certs/kubernetes.patrick-cloud.com.crt
+    # cert_key: /etc/ssl/certs/kubernetes.patrick-cloud.com.key
+    # enforce_domain: False
+  aws:
+    allowed_auth_providers: ec2_iam_role, default
+    assume_role_enabled: true
+
+# Gives Grafana access to use service account 
+env:
+  AWS_ROLE_ARN: arn:aws:iam::948065143262:role/patrick-cloud-eks-cloudwatch-readonly-sa-role
+  AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+  AWS_REGION: us-east-1
+extraSecretMounts:
+  - name: aws-iam-token
+    mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+    readOnly: true
+    projected:
+      defaultMode: 420
+      sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token
+  # - name: tls-certs
+  #   mountPath: /etc/ssl/certs
+  #   secretName: patrick-cloud-credential
+  #   readOnly: true
+  #   subPath: ""
+serviceAccount:
+  create: true
+  name: cloudwatch-readonly-sa
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::948065143262:role/patrick-cloud-eks-cloudwatch-readonly-sa-role

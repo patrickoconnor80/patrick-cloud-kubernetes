@@ -2,13 +2,15 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: grafana-pv
+  name: prometheus-alert-manager-pv
+  labels:
+    volume-name: prometheus-alert-manager-pv
 spec:
   accessModes:
   - ReadWriteOnce
   awsElasticBlockStore:
     fsType: ext4
-    volumeID: $GRAFANA_PV
+    volumeID: $ALERT_MANAGER_PROMETHEUS_PV
   capacity:
     storage: 2Gi
   persistentVolumeReclaimPolicy: Retain
