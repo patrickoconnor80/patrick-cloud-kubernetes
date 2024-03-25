@@ -69,12 +69,7 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n ku
 
 #kubectl create -n istio-system secret generic tls-secret --from-file=key=../certs/key.pem --from-file=cert=../certs/cert.pem
 
-kubectl create -n istio-system secret tls patrick-cloud-credential \
-  --key=../certs/kubernetes.patrick-cloud.com.key \
-  --cert=../certs/kubernetes.patrick-cloud.com.crt
-kubectl create -n istio-ingress secret tls patrick-cloud-credential \
-  --key=../certs/kubernetes.patrick-cloud.com.key \
-  --cert=../certs/kubernetes.patrick-cloud.com.crt
+kubectl create secret tls patrick-cloud-certs -n istio-ingress --key kubernetes.patrick-cloud.com.key --cert kubernetes.patrick-cloud.com.crt
 
 kubectl apply -f ../cfg/aws_lb_controller.yaml
 kubectl apply -f ../cfg/2048.yaml

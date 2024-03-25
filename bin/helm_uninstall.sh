@@ -19,3 +19,5 @@ kubectl delete -f ../cfg/namespaces.yaml
 kubectl delete -f ../cfg/storage_class.yaml
 kubectl delete -f ../cfg/external_secrets.yaml
 kubectl delete -f ../cfg/storage_class.yaml
+kubectl delete -f ../cfg/aws_lb_controller.yaml
+kubectl delete -f ../cfg/2048.yaml
