@@ -1,6 +1,7 @@
+# Setting up a subpath on Istio - see documentation
+# https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#istio
 configs:
   params:
-    server:
-      domain: http://kubernetes.patrick-cloud.com
-      basehref: /argocd
-      insecure: true
+    server.rootpath: /argocd
+    server.basehref: /argocd
+    server.insecure: true

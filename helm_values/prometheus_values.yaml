@@ -11,6 +11,12 @@ server:
   extraArgs:
     web.external-url: http://kubernetes.patrick-cloud.com/prometheus
     web.route-prefix: /
+extraScrapeConfigs:
+  - job_name: 'jenkins'
+  metrics_path: '/prometheus'
+  static_configs:
+    - targets: 
+      - 3.90.0.250:8080
 alertmanager:
   persistence:
     size: 2Gi

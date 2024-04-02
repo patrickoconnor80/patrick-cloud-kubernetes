@@ -44,9 +44,6 @@ grafana.ini:
     domain: kubernetes.patrick-cloud.com
     protocol: http
     root_url: "%(protocol)s://%(domain)s/grafana/"
-    # cert_file: /etc/ssl/certs/kubernetes.patrick-cloud.com.crt
-    # cert_key: /etc/ssl/certs/kubernetes.patrick-cloud.com.key
-    # enforce_domain: False
   aws:
     allowed_auth_providers: ec2_iam_role, default
     assume_role_enabled: true
@@ -67,11 +64,6 @@ extraSecretMounts:
             audience: sts.amazonaws.com
             expirationSeconds: 86400
             path: token
-  # - name: tls-certs
-  #   mountPath: /etc/ssl/certs
-  #   secretName: patrick-cloud-credential
-  #   readOnly: true
-  #   subPath: ""
 serviceAccount:
   create: true
   name: cloudwatch-readonly-sa
