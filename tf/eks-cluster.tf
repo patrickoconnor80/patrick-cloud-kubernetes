@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
 resource "aws_security_group" "this" {
   name        = "${local.prefix}-eks-cluster-sg"
   description = "Cluster communication with worker nodes"
-  vpc_id      = data.aws_vpc.golden_vpc.id
+  vpc_id      = data.aws_vpc.this.id
 
   egress {
     from_port   = 0

@@ -48,3 +48,15 @@ resource "aws_iam_role_policy_attachment" "external_secrets_sa" {
   policy_arn = aws_iam_policy.external_secrets_sa.arn
   role       = aws_iam_role.external_secrets_sa.name
 }
+
+# Policy found at patrick-cloud-databricks/tf/account/secrets_manager.tf:aws_iam_policy.secrets_kms_access
+resource "aws_iam_role_policy_attachment" "databricks_account_secrets_kms_access" {
+  policy_arn = data.aws_iam_policy.databricks_account_secrets_kms_access.arn
+  role       = aws_iam_role.external_secrets_sa.name
+}
+
+# Policy found at patrick-cloud-databricks/tf/workspace/secrets_manager.tf:aws_iam_policy.secrets_kms_access
+resource "aws_iam_role_policy_attachment" "databricks_workspace_secrets_kms_access" {
+  policy_arn = data.aws_iam_policy.databricks_workspace_secrets_kms_access.arn
+  role       = aws_iam_role.external_secrets_sa.name
+}

@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dbt
+  labels:
+    istio-injection : enabled
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dbt
+  name: deployment-dbt
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-dbt-docs
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app-dbt-docs
+    spec:
+      containers:
+      - name: app-dbt-docs
+        image: "948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: DATABRICKS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: databricks-token
+              key: DATABRICKS_TOKEN_
+        - name: DATABRICKS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: databricks-host
+              key: DATABRICKS_HOST
+        - name: DATABRICKS_SQL_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: databricks-sql-endpoint
+              key: DATABRICKS_SQL_ENDPOINT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dbt
+  name: service-dbt-docs
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: app-dbt-docs
