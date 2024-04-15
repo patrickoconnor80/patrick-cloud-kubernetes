@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: app-dbt-docs
-        image: "948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:51906c5f767fe02d2e2fda1ca46e98d31f6df307a6bfcc26755d7ae51a808f10
+        image: "948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:51906c5f767fe02d2e2fda1ca46e98d31f6df307a6bfcc26755d7ae51a808f10"
         imagePullPolicy: Always
         ports:
         - containerPort: 80
