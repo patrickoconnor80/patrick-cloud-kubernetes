@@ -14,7 +14,8 @@ node {
                         sh "git config user.name patrickoconnor80"
                         //sh "git switch master"
                         sh "cat cfg/dbt.yaml"
-                        sh "sed -i 's+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs.*+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:${DOCKERTAG}\"+g' cfg/dbt.yaml"
+                        env.OLD_IMAGE_TAG = sh (script: 'cat dbt.yaml | grep image: | cut -d \':\' -f 3 | cut -d \'"\' -f 1', returnStdout: true)
+                        sh "sed -i 's+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:${env.OLD_IMAGE_TAG}+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:${env.DOCKERTAG}+g' cfg/dbt.yaml"
                         sh "cat cfg/dbt.yaml"
                         sh "git add ."
                         sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
