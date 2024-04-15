@@ -14,7 +14,7 @@ node {
                         sh "git config user.name patrickoconnor80"
                         //sh "git switch master"
                         sh "cat cfg/dbt.yaml"
-                        sh "snap set system homedirs='/var/lib/jenkins/workspace/dbt-docs-update-manifest'"
+                        sh "sudo snap set system homedirs='/var/lib/jenkins/workspace/dbt-docs-update-manifest'"
                         sh "yq -i '.spec.template.spec.containers[0].image=948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:${DOCKERTAG}' cfg/dbt.yaml"
                         sh "cat cfg/dbt.yaml"
                         sh "git add ."
