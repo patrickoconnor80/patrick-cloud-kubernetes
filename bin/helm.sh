@@ -39,6 +39,7 @@ do
 done
 
 kubectl apply -f ../cfg/2048.yaml
+kubectl apply -f ../cfg/dbt.yaml
 
 # Set up Gateway last as it references a lot of the pods
 kubectl apply -f ../cfg/istio_dashboards_gateway.yaml
