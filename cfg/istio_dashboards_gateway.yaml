@@ -157,29 +157,6 @@ spec:
           number: 80
         host: service-2048.game-2048.svc.cluster.local
 ---
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: dbt-vs
-  namespace: dbt
-spec:
-  hosts:
-  - "kubernetes.patrick-cloud.com"
-  gateways:
-  - istio-system/patrick-cloud-gateway
-  http:
-  - name: dbt-docs
-    match:
-    - uri:
-        prefix: "/dbt-docs/"
-    rewrite:
-       uri: "/"
-    route:
-    - destination:
-        port:
-          number: 80
-        host: service-dbt-docs.dbt.svc.cluster.local
----
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication
 metadata:
