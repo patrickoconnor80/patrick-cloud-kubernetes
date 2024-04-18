@@ -18,3 +18,10 @@ metadata:
   name: argocd
   labels:
     istio-injection : enabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dbt
+  labels:
+    istio-injection : enabled

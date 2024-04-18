@@ -41,8 +41,12 @@ data "aws_secretsmanager_secret" "databricks_token" {
   name = "DATABRICKS_TOKEN_"
 }
 
-data "aws_secretsmanager_secret" "databricks_token" {
-  name = "DATABRICKS_TOKEN_"
+data "aws_secretsmanager_secret" "databricks_sql_endpoint" {
+  name = "DATABRICKS_SQL_ENDPOINT"
+}
+
+data "aws_secretsmanager_secret" "databricks_host" {
+  name = "DATABRICKS_HOST"
 }
 
 data "aws_iam_policy" "databricks_workspace_secrets_kms_access" {

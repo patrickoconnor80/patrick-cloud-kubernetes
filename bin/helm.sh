@@ -47,13 +47,12 @@ kubectl apply -f ../cfg/istio_dashboards_gateway.yaml
 # Install ArgoCD
 helm install argo-cd argo/argo-cd --version 6.7.3 --namespace argocd --values ../helm_values/argocd_values.yaml
 
-# Install AWS ALB Controller
-helm repo update eks
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --values ../helm_values/aws_lb_controller_values.yaml
+# # Install AWS ALB Controller
+# helm repo update eks
+# helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --values ../helm_values/aws_lb_controller_values.yaml
 
 #kubectl create -n istio-system secret generic tls-secret --from-file=key=../certs/key.pem --from-file=cert=../certs/cert.pem
 
-kubectl create secret tls patrick-cloud-certs -n istio-ingress --key ../certs/kubernetes.patrick-cloud.com.key --cert ../certs/kubernetes.patrick-cloud.com.crt
 kubectl create secret tls patrick-cloud-certs -n istio-system --key ../certs/kubernetes.patrick-cloud.com.key --cert ../certs/kubernetes.patrick-cloud.com.crt
 
 kubectl apply -f ../cfg/aws_lb_controller.yaml
