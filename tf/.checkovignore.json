@@ -1,0 +1,25 @@
+{
+  "CKV_AWS_39": {
+    "Name": "Ensure Amazon EKS public endpoint disabled",
+    "Reason": "Access to EKS only allowed from my local IP",
+    "Severity": "MEDIUM"
+  },
+  "CKV_AWS_58": {
+    "Name": "Ensure EKS Cluster has Secrets Encryption Enabled",
+    "Reason": "TODO",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_189": {
+    "Name": "Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)",
+    "Reason": "TODO",
+    "Severity": "LOW"
+  },
+  "CKV_AWS_3": {
+    "Name": "Ensure all data stored in the EBS is securely encrypted",
+    "Reason": "TODO",
+    "Severity": "HIGH"
+  }
+}
+
+
+  

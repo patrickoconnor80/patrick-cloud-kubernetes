@@ -3,17 +3,17 @@ data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
 data "aws_vpc" "this" {
-    filter {
-        name = "tag:Name"
-        values = ["${local.prefix}-vpc"]
-    }
+  filter {
+    name   = "tag:Name"
+    values = ["${local.prefix}-vpc"]
+  }
 }
 
 data "aws_subnets" "public" {
-    filter {
-        name = "tag:Name"
-        values = ["${local.prefix}-public-us-east-1*"]
-    }
+  filter {
+    name   = "tag:Name"
+    values = ["${local.prefix}-public-us-east-1*"]
+  }
 }
 
 data "aws_subnet" "public" {
@@ -22,10 +22,10 @@ data "aws_subnet" "public" {
 }
 
 data "aws_subnets" "private" {
-    filter {
-        name = "tag:Name"
-        values = ["${local.prefix}-private-us-east-1*"]
-    }
+  filter {
+    name   = "tag:Name"
+    values = ["${local.prefix}-private-us-east-1*"]
+  }
 }
 
 data "aws_subnet" "private" {

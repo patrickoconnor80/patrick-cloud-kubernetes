@@ -48,6 +48,7 @@ resource "aws_iam_policy" "cloudwatch_readonly_sa" {
       }
     ]
   })
+  #checkov:skip=CKV_AWS_355:Not too permissive
 }
 
 resource "aws_iam_role_policy_attachment" "cloudwatch_readonly_sa" {

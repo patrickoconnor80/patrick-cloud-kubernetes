@@ -31,27 +31,29 @@ resource "aws_security_group" "this" {
   name        = "${local.prefix}-eks-cluster-sg"
   description = "Cluster communication with worker nodes"
   vpc_id      = data.aws_vpc.this.id
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   tags = {
     Name = "${local.prefix}-eks-cluster-sg"
   }
 }
 
-resource "aws_security_group_rule" "ingress_local" {
-  cidr_blocks       = [local.workstation-external-cidr]
-  description       = "Allow workstation to communicate with the cluster API Server"
-  from_port         = 443
-  protocol          = "tcp"
+resource "aws_security_group_rule" "egress" {
   security_group_id = aws_security_group.this.id
-  to_port           = 443
+  description       = "Allow all outbound traffic on EKS"
+  type              = "egress"
+  protocol          = "tcp"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "ingress_local" {
+  security_group_id = aws_security_group.this.id
+  description       = "Allow workstation to communicate with the cluster API Server"
   type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = [local.workstation-external-cidr]
 }
 
 resource "aws_eks_cluster" "this" {
@@ -59,14 +61,17 @@ resource "aws_eks_cluster" "this" {
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
-    security_group_ids = [aws_security_group.this.id]
-    subnet_ids         = local.public_subnet_ids
+    security_group_ids  = [aws_security_group.this.id]
+    subnet_ids          = local.public_subnet_ids
+    public_access_cidrs = [local.workstation-external-cidr]
   }
 
   access_config {
     authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = true
   }
+
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   depends_on = [
     aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
@@ -76,21 +81,21 @@ resource "aws_eks_cluster" "this" {
 
 resource "null_resource" "login_eks_locally" {
 
-   provisioner "local-exec" {
-     command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
-   }
+  provisioner "local-exec" {
+    command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
+  }
 
-   depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this]
 }
 
 ##  CONSOLE ACCESS ##
 
 # Create root as user in EKS
 resource "aws_eks_access_entry" "root" {
-  cluster_name      = aws_eks_cluster.this.name
-  principal_arn     = "arn:aws:iam::948065143262:root"
-  user_name         = "root"
-  type              = "STANDARD"
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = "arn:aws:iam::948065143262:root"
+  user_name     = "root"
+  type          = "STANDARD"
 }
 
 # Give root full cluster admin access
@@ -100,6 +105,6 @@ resource "aws_eks_access_policy_association" "root" {
   principal_arn = "arn:aws:iam::948065143262:root"
 
   access_scope {
-    type       = "cluster"
+    type = "cluster"
   }
 }
