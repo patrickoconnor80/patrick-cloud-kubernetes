@@ -33,3 +33,15 @@ resource "aws_ebs_volume" "alert_manager_prometheus" {
     prevent_destroy = true
   }
 }
+
+resource "aws_ebs_volume" "argocd" {
+  availability_zone = "us-east-1b"
+  size              = 5
+  type = "gp2"
+  tags = {
+    Name = "${local.prefix}-eks-argocd-pv"
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
+}

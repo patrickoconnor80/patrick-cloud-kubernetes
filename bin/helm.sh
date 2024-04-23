@@ -39,14 +39,17 @@ do
 done
 
 kubectl apply -f ../cfg/2048.yaml
-kubectl apply -f ../cfg/dbt.yaml
-
-# Set up Gateway last as it references a lot of the pods
-kubectl apply -f ../cfg/istio_dashboards_gateway.yaml
+kubectl apply -f ../cfg/dbt-docs/dbt-docs.yaml
 
 
 # Install ArgoCD
+ARGOCD_PV=$(aws ec2 describe-volumes --filters Name=tag:Name,Values=patrick-cloud-eks-grafana-pv | grep VolumeId | cut -d'"' -f 4)
+sed "s/\$ARGOCD_PV/$ARGOCD_PV/" ../cfg/argocd_pv.yaml  | kubectl apply -f -
 helm install argo-cd argo/argo-cd --version 6.7.3 --namespace argocd --values ../helm_values/argocd_values.yaml
+
+
+# Set up Gateway last as it references a lot of the pods
+kubectl apply -f ../cfg/istio_dashboards_gateway.yaml
 
 # # Install AWS ALB Controller
 # helm repo update eks
@@ -56,7 +59,7 @@ helm install argo-cd argo/argo-cd --version 6.7.3 --namespace argocd --values ..
 
 kubectl create secret tls patrick-cloud-certs -n istio-system --key ../certs/kubernetes.patrick-cloud.com.key --cert ../certs/kubernetes.patrick-cloud.com.crt
 
-kubectl apply -f ../cfg/aws_lb_controller.yaml
+# kubectl apply -f ../cfg/aws_lb_controller.yaml
 
 # Store Nodeport Exposed by Istio Gateway in AWS Parameter Store so it can be referenced by the ALB
 HTTPS_NODEPORT=$(kubectl describe svc -n istio-system istio-ingress | grep NodePort | grep https | grep -Eo '[0-9]{1,5}')

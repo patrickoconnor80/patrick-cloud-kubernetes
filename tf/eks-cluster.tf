@@ -31,6 +31,7 @@ resource "aws_security_group" "this" {
   name        = "${local.prefix}-eks-cluster-sg"
   description = "Cluster communication with worker nodes"
   vpc_id      = data.aws_vpc.this.id
+
   tags = {
     Name = "${local.prefix}-eks-cluster-sg"
   }
@@ -40,7 +41,7 @@ resource "aws_security_group_rule" "egress" {
   security_group_id = aws_security_group.this.id
   description       = "Allow all outbound traffic on EKS"
   type              = "egress"
-  protocol          = "tcp"
+  protocol          = -1
   from_port         = 0
   to_port           = 0
   cidr_blocks       = ["0.0.0.0/0"]
@@ -61,17 +62,14 @@ resource "aws_eks_cluster" "this" {
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
-    security_group_ids  = [aws_security_group.this.id]
-    subnet_ids          = local.public_subnet_ids
-    public_access_cidrs = [local.workstation-external-cidr]
+    security_group_ids = [aws_security_group.this.id]
+    subnet_ids         = local.public_subnet_ids
   }
 
   access_config {
     authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = true
   }
-
-  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   depends_on = [
     aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
@@ -81,30 +79,30 @@ resource "aws_eks_cluster" "this" {
 
 resource "null_resource" "login_eks_locally" {
 
-  provisioner "local-exec" {
-    command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
-  }
+   provisioner "local-exec" {
+     command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
+   }
 
-  depends_on = [aws_eks_cluster.this]
+   depends_on = [aws_eks_cluster.this]
 }
 
 ##  CONSOLE ACCESS ##
 
 # Create root as user in EKS
 resource "aws_eks_access_entry" "root" {
-  cluster_name  = aws_eks_cluster.this.name
-  principal_arn = "arn:aws:iam::948065143262:root"
-  user_name     = "root"
-  type          = "STANDARD"
+  cluster_name      = aws_eks_cluster.this.name
+  principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+  user_name         = "root"
+  type              = "STANDARD"
 }
 
 # Give root full cluster admin access
 resource "aws_eks_access_policy_association" "root" {
   cluster_name  = aws_eks_cluster.this.name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  principal_arn = "arn:aws:iam::948065143262:root"
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
 
   access_scope {
-    type = "cluster"
+    type       = "cluster"
   }
 }
