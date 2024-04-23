@@ -5,12 +5,13 @@ configs:
     server.rootpath: /argocd
     server.basehref: /argocd
     server.insecure: true
-persistence:
-  enabled: true
-  size: 2Gi
-  storageClassName: ebs-gp2-sc
-  accessModes:
-    - ReadWriteOnce
-  volumeName: argocd-pv
-  selectorLabels:
-    volume-name: argocd-pv
+redis-ha:
+  persistentVolume: 
+    enabled: true
+    size: 2Gi
+    storageClassName: ebs-gp2-sc
+    accessModes:
+      - ReadWriteOnce
+    volumeName: argocd-pv
+    selectorLabels:
+      volume-name: argocd-pv
