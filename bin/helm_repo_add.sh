@@ -13,6 +13,3 @@ fi
 if ! helm repo list | grep -q argocd; then
     helm repo add argo https://argoproj.github.io/argo-helm
 fi
-if ! helm repo list | grep -q aws-load-balancer-controller; then
-    helm repo add eks https://aws.github.io/eks-charts
-fi

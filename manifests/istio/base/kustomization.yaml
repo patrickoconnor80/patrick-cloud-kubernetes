@@ -1,0 +1,35 @@
+resources:
+- namespace.yaml
+- istio-gateway.yaml
+- istio-virtual-services.yaml
+- istio-peer-authentication.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/jaeger.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/prometheus.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/grafana.yaml
+  
+helmCharts:
+- name: base
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: v1.21.0
+  releaseName: base
+  namespace: istio-system
+- name: istiod
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: v1.21.0
+  releaseName: istiod
+  namespace: istio-system
+  valuesInline:
+    meshConfig:
+      accessLogFile: /dev/stdout
+- name: gateway
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: v1.21.0
+  releaseName: gateway
+  namespace: istio-system
+  valuesInline:
+    defaults:
+      service:
+        type: NodePort
+
+namespace: istio-system

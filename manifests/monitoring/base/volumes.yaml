@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+  labels:
+    volume-name: grafana-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: vol-12345 #grafana-tag
+  capacity:
+    storage: 2Gi
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ebs-gp2-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-alert-manager-pv
+  labels:
+    volume-name: prometheus-alert-manager-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: vol-12345 #prometheus-alert-manager-tag
+  capacity:
+    storage: 2Gi
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ebs-gp2-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-server-pv
+  labels:
+    volume-name: prometheus-server-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: vol-43580492035 #prometheus-server-tag
+  capacity:
+    storage: 8Gi
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ebs-gp2-sc

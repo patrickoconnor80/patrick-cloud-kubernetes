@@ -1,0 +1,16 @@
+resources:
+- namespace.yaml
+- config-map.yaml
+- istio-virtual-services.yaml
+- argocd-projects.yaml
+- argocd-applications.yaml
+
+helmCharts:
+- name: argo-cd
+  repo: https://argoproj.github.io/argo-helm
+  version: v6.7.3
+  releaseName: argo-cd
+  namespace: argocd
+  valuesFile: helm-values/argocd-values.yaml
+
+namespace: argocd

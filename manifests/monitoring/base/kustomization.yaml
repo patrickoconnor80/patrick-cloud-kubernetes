@@ -1,0 +1,21 @@
+resources:
+- namespace.yaml
+- volumes.yaml
+- external-secrets.yaml
+- istio-virtual-service.yaml
+
+helmCharts:
+- name: prometheus
+  repo: https://grafana.github.io/helm-charts
+  version: v.7.3.9
+  releaseName: prometheus
+  namespace: monitoring
+  valuesFile: helm-values/prometheus-values.yaml
+- name: grafana
+  repo: https://prometheus-community.github.io/helm-charts
+  version: v.25.20.0
+  releaseName: grafana
+  namespace: monitoring
+  valuesFile: helm-values/grafana-values.yaml
+
+namespace: monitoring

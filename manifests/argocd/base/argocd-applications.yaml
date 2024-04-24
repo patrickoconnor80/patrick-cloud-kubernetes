@@ -1,0 +1,95 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: game-2048
+  namespace: argocd
+spec:
+  destination:
+    namespace: game-2048
+    server: https://kubernetes.default.svc
+  project: patrick-cloud-project
+  source:
+    path: manifests/apps/2048/
+    repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dbt-docs
+  namespace: argocd
+spec:
+  destination:
+    namespace: dbt-docs
+    server: https://kubernetes.default.svc
+  project: patrick-cloud-project
+  source:
+    path: manifests/apps/dbt-docs/
+    repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+  project: patrick-cloud-project
+  source:
+    path: manifests/monitoring/base/
+    repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+  project: patrick-cloud-project
+  source:
+    path: manifests/argocd/base/
+    repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio
+  namespace: argocd
+spec:
+  destination:
+    namespace: istio-system
+    server: https://kubernetes.default.svc
+  project: patrick-cloud-project
+  source:
+    path: manifests/istio/base/
+    repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

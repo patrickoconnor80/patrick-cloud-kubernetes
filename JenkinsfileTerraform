@@ -16,13 +16,28 @@ node {
         '''
     }
 
-    stage('Apply Terraform') {
+    stage('Apply Terraform - Volumes') {
         sh """
-            cd tf
+            pushd tf/volumes
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
+            popd tf/volumes
         """
     }
 
+    stage('Apply Terraform - Kubernetes') {
+        sh """
+            pushd tf/kubernetes
+            terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
+            terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
+            popd tf/kubernetes
+        """
+    }
+
+    stage('Apply Manifests for base infra') {
+        sh """
+            sh bin/k8s_apply_base_infra.sh
+        """
+    }
 
 }
