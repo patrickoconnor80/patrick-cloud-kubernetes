@@ -20,14 +20,18 @@ node {
         sh """
             cd tf/volumes
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
+            ls
+            ls env
+            ls env/dev
+            cat env/dev/dev.tfvars
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
             cd ../..
         """
     }
 
-    stage('Apply Terraform - Kubernetes') {
+    stage('Apply Terraform - EKS') {
         sh """
-            cd tf/kubernetes
+            cd tf/eks
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
             cd ../..
