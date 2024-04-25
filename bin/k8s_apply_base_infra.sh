@@ -5,11 +5,9 @@ fi
 
 # Install Kustomize if not already installed in workspace
 if ! istioctl version ; then
-    echo "install istioctl"
     curl -L https://istio.io/downloadIstio | sh -
     export PATH="$PATH:/var/lib/jenkins/workspace/kubernetes-terraform-dev/istio-1.21.2/bin"
 fi
-ls
 
 # Add helm repos
 sh bin/helm_repo_add.sh
