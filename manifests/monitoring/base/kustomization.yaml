@@ -2,7 +2,7 @@ resources:
 - namespace.yaml
 - volumes.yaml
 - external-secrets.yaml
-- istio-virtual-service.yaml
+- istio-virtual-services.yaml
 
 helmCharts:
 - name: prometheus

@@ -6,6 +6,7 @@ sh bin/helm_repo_add.sh
 kubectl apply -f manifests/storage/storage-class.yaml
 
 # Install External Secrets so secrets from AWS Secrets Manager can be utilized
+helm list
 if ! helm list | grep -q external-secrets; then
     helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 fi

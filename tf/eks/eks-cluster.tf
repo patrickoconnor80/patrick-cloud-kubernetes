@@ -30,6 +30,10 @@ resource "null_resource" "login_eks_locally" {
     command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
   }
 
+  triggers = {
+    always_run = timestamp()
+  }
+  
   depends_on = [aws_eks_cluster.this]
 }
 
@@ -66,7 +70,7 @@ resource "aws_security_group_rule" "ingress_local" {
   protocol          = "tcp"
   from_port         = 443
   to_port           = 443
-  cidr_blocks       = [local.workstation-external-cidr]
+  cidr_blocks       = ["98.229.26.12/32"]
 }
 
 resource "aws_security_group_rule" "ingress_jenkins" {
