@@ -1,2 +1,4 @@
-variable "env" {}
-variable "tags" {}
+variable "env" {
+  description = "Environment"
+  type        = string
+}
