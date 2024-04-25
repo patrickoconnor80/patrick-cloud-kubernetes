@@ -58,7 +58,7 @@ resource "aws_security_group_rule" "egress" {
 }
 
 resource "aws_security_group_rule" "ingress_local" {
-  security_group_id = aws_security_group.eks_cluster.id
+  security_group_id = data.aws_security_group.eks_cluster.id
   description       = "Allow workstation to communicate with the cluster API Server"
   type              = "ingress"
   protocol          = "tcp"
