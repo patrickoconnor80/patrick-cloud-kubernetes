@@ -69,6 +69,16 @@ resource "aws_security_group_rule" "ingress_local" {
   cidr_blocks       = [local.workstation-external-cidr]
 }
 
+resource "aws_security_group_rule" "ingress_jenkins" {
+  security_group_id = data.aws_security_group.eks_cluster.id
+  description       = "Allow jenkins to communicate with the cluster API Server"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  source_security_group_id       = [data.aws_security_group.jenkins.id]
+}
+
 ##  CONSOLE ACCESS ##
 
 # Create root as user in EKS

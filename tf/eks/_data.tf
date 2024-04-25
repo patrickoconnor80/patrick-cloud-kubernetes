@@ -68,3 +68,7 @@ data "aws_iam_role" "eks_node" {
 data "aws_security_group" "eks_cluster" {
   name = "${local.prefix}-eks-cluster-sg"
 }
+
+data "aws_security_group" "jenkins" {
+  name = "${local.prefix}-jenkins-sg"
+}

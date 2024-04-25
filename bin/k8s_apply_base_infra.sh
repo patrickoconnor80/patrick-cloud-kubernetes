@@ -3,7 +3,7 @@ ls
 sh bin/helm_repo_add.sh
 
 # Create storage class
-kubectl apply -f manifests/storage/storage_class.yaml
+kubectl apply -f manifests/storage/storage-class.yaml
 
 # Install External Secrets so secrets from AWS Secrets Manager can be utilized
 helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
@@ -16,6 +16,8 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     -e "s/\vol-[0-9,A-Z]* #prometheus-server-tag/$PROMETHEUS_SERVER_PV #prometheus-server-tag/" \
     -e "s/\vol-[0-9,A-Z]* #grafana-tag/$GRAFANA_PV #grafana-tag/" \
     manifests/monitoring/base/volumes.yaml  | kubectl apply -f -
+
+sudo curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 
 # Apply Istio, Monitoring and ArgoCD
 kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
