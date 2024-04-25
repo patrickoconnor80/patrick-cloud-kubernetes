@@ -36,7 +36,9 @@ node {
 
     stage('Apply Manifests for base infra') {
         sh """
-            curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+            if ! ls | grep -q kustomize; then
+                curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+            fi
             sh bin/k8s_apply_base_infra.sh
         """
     }
