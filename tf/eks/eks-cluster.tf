@@ -1,14 +1,14 @@
 resource "aws_eks_cluster" "this" {
-  name     = local.cluster_name
-  role_arn = data.aws_iam_role.eks_cluster.arn
-  enabled_cluster_log_types = ["api", "audit", "authenticator","controllerManager","scheduler"]
+  name                      = local.cluster_name
+  role_arn                  = data.aws_iam_role.eks_cluster.arn
+  enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   vpc_config {
-    security_group_ids = [data.aws_security_group.eks_cluster.id]
-    subnet_ids         = local.public_subnet_ids
+    security_group_ids      = [data.aws_security_group.eks_cluster.id]
+    subnet_ids              = local.public_subnet_ids
     endpoint_private_access = true
-    endpoint_public_access = true
-    public_access_cidrs = ["98.229.26.12/32"]
+    endpoint_public_access  = true
+    public_access_cidrs     = ["98.229.26.12/32"]
   }
 
   access_config {
@@ -27,10 +27,10 @@ resource "aws_eks_cluster" "this" {
 resource "null_resource" "login_eks_locally" {
 
   provisioner "local-exec" {
-     command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
-   }
+    command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
+  }
 
-   depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this]
 }
 
 
@@ -70,23 +70,23 @@ resource "aws_security_group_rule" "ingress_local" {
 }
 
 resource "aws_security_group_rule" "ingress_jenkins" {
-  security_group_id = data.aws_security_group.eks_cluster.id
-  description       = "Allow jenkins to communicate with the cluster API Server"
-  type              = "ingress"
-  protocol          = "tcp"
-  from_port         = 443
-  to_port           = 443
-  source_security_group_id       = [data.aws_security_group.jenkins.id]
+  security_group_id        = data.aws_security_group.eks_cluster.id
+  description              = "Allow jenkins to communicate with the cluster API Server"
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 443
+  to_port                  = 443
+  source_security_group_id = data.aws_security_group.jenkins.id
 }
 
 ##  CONSOLE ACCESS ##
 
 # Create root as user in EKS
 resource "aws_eks_access_entry" "root" {
-  cluster_name      = aws_eks_cluster.this.name
-  principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-  user_name         = "root"
-  type              = "STANDARD"
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+  user_name     = "root"
+  type          = "STANDARD"
 }
 
 # Give root full cluster admin access
@@ -96,6 +96,6 @@ resource "aws_eks_access_policy_association" "root" {
   principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
 
   access_scope {
-    type       = "cluster"
+    type = "cluster"
   }
 }
