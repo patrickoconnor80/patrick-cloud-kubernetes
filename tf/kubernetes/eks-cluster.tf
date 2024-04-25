@@ -60,10 +60,12 @@ resource "aws_security_group_rule" "ingress_local" {
 resource "aws_eks_cluster" "this" {
   name     = local.cluster_name
   role_arn = aws_iam_role.eks_cluster.arn
+  enabled_cluster_log_types = ["api", "audit", "authenticator","controllerManager","scheduler"]
 
   vpc_config {
     security_group_ids = [aws_security_group.this.id]
     subnet_ids         = local.public_subnet_ids
+    endpoint_public_access = [aws_vpc.this.cidr_block]
   }
 
   access_config {
@@ -81,7 +83,7 @@ resource "aws_eks_cluster" "this" {
 
 resource "null_resource" "login_eks_locally" {
 
-   provisioner "local-exec" {
+  provisioner "local-exec" {
      command = "aws eks --region ${data.aws_region.current.name} update-kubeconfig --name ${aws_eks_cluster.this.name}"
    }
 
