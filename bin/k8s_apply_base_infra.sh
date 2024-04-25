@@ -7,7 +7,7 @@ fi
 if ! istioctl version ; then
     echo "install istioctl"
     curl -L https://istio.io/downloadIstio | sh -
-    export PATH=$PWD/bin:$PATH
+    export PATH="$PATH:/var/lib/jenkins/workspace/kubernetes-terraform-dev/istio-1.21.2/bin"
 fi
 ls
 
