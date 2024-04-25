@@ -10,6 +10,6 @@ fi
 if ! helm repo list | grep -q grafana; then
     helm repo add grafana https://grafana.github.io/helm-charts
 fi
-if ! helm repo list | grep -q argocd; then
+if ! helm repo list | grep -q argo; then
     helm repo add argo https://argoproj.github.io/argo-helm
 fi

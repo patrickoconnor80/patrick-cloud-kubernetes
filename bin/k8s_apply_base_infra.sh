@@ -17,8 +17,6 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     -e "s/\vol-[0-9,A-Z]* #grafana-tag/$GRAFANA_PV #grafana-tag/" \
     manifests/monitoring/base/volumes.yaml  | kubectl apply -f -
 
-sudo curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
-
 # Apply Istio, Monitoring and ArgoCD
 kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
 kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
