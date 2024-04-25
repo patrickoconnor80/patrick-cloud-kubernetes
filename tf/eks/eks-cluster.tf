@@ -1,69 +1,10 @@
-resource "aws_iam_role" "eks_cluster" {
-  name = "${local.prefix}-eks-cluster-role"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "eks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-}
-
-resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
-  role       = aws_iam_role.eks_cluster.name
-}
-
-resource "aws_security_group" "this" {
-  name        = "${local.prefix}-eks-cluster-sg"
-  description = "Cluster communication with worker nodes"
-  vpc_id      = data.aws_vpc.this.id
-
-  tags = {
-    Name = "${local.prefix}-eks-cluster-sg"
-  }
-}
-
-resource "aws_security_group_rule" "egress" {
-  security_group_id = aws_security_group.this.id
-  description       = "Allow all outbound traffic on EKS"
-  type              = "egress"
-  protocol          = -1
-  from_port         = 0
-  to_port           = 0
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
-resource "aws_security_group_rule" "ingress_local" {
-  security_group_id = aws_security_group.this.id
-  description       = "Allow workstation to communicate with the cluster API Server"
-  type              = "ingress"
-  protocol          = "tcp"
-  from_port         = 443
-  to_port           = 443
-  cidr_blocks       = [local.workstation-external-cidr]
-}
-
 resource "aws_eks_cluster" "this" {
   name     = local.cluster_name
-  role_arn = aws_iam_role.eks_cluster.arn
+  role_arn = data.aws_iam_role.eks_cluster.arn
   enabled_cluster_log_types = ["api", "audit", "authenticator","controllerManager","scheduler"]
 
   vpc_config {
-    security_group_ids = [aws_security_group.this.id]
+    security_group_ids = [data.aws_security_group.eks_cluster.id]
     subnet_ids         = local.public_subnet_ids
     public_access_cidrs = [data.aws_vpc.this.cidr_block]
   }
@@ -88,6 +29,42 @@ resource "null_resource" "login_eks_locally" {
    }
 
    depends_on = [aws_eks_cluster.this]
+}
+
+
+## IAM POLCIY ATTACHMENTS ##
+
+resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  role       = data.aws_iam_role.eks_cluster.name
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  role       = data.aws_iam_role.eks_cluster.name
+}
+
+
+## SECRURITY GROUP RULES ##
+
+resource "aws_security_group_rule" "egress" {
+  security_group_id = data.aws_security_group.eks_cluster.id
+  description       = "Allow all outbound traffic on EKS"
+  type              = "egress"
+  protocol          = -1
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "ingress_local" {
+  security_group_id = aws_security_group.eks_cluster.id
+  description       = "Allow workstation to communicate with the cluster API Server"
+  type              = "ingress"
+  protocol          = "tcp"
+  from_port         = 443
+  to_port           = 443
+  cidr_blocks       = [local.workstation-external-cidr]
 }
 
 ##  CONSOLE ACCESS ##

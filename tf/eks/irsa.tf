@@ -1,4 +1,4 @@
-resource "aws_eks_identity_provider_config" "demo" {
+resource "aws_eks_identity_provider_config" "this" {
   cluster_name = aws_eks_cluster.this.name
   oidc {
     client_id                     = substr(aws_eks_cluster.this.identity.0.oidc.0.issuer, -32, -1)
