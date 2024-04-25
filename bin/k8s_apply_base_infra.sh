@@ -1,5 +1,15 @@
+# Install Kustomize if not already installed in workspace
+if ! ls | grep -q kustomize; then
+    curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+fi
+
+# Install Kustomize if not already installed in workspace
+if istioctl version; then
+    curl -L https://istio.io/downloadIstio | sh -
+    export PATH=$PWD/bin:$PATH
+fi
+
 # Add helm repos
-ls
 sh bin/helm_repo_add.sh
 
 # Create storage class
@@ -23,7 +33,7 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
 istioctl install -y
 
 # Apply Argo CD CRD's
-kubectl apply -f manifests/argo-cd/argo-cd-crds.yaml
+kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
 
 # Apply Istio, Monitoring and ArgoCD
 ./kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
