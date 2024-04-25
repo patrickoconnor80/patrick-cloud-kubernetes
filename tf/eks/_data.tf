@@ -58,11 +58,11 @@ data "aws_iam_policy" "databricks_account_secrets_kms_access" {
 }
 
 data "aws_iam_role" "eks_cluster" {
-  name = "${var.prefix}-eks-cluster-role"
+  name = "${local.prefix}-eks-cluster-role"
 }
 
 data "aws_iam_role" "eks_node" {
-  name = "${var.prefix}-eks-node-role"
+  name = "${local.prefix}-eks-node-role"
 }
 
 data "aws_security_group" "eks_cluster" {
