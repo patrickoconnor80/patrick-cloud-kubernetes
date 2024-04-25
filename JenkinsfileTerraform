@@ -11,26 +11,26 @@ node {
             [ ! -d "checkov_venv" ] && python3 -m venv checkov_venv
             . checkov_venv/bin/activate
             pip install checkov
-            checkov -d ./tf --skip-check $SKIPS --skip-path tf/archive
+            checkov -d ./tf --skip-check $SKIPS --skip-path tf/.archive
             deactivate
         '''
     }
 
     stage('Apply Terraform - Volumes') {
         sh """
-            pushd tf/volumes
+            cd tf/volumes
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
-            popd tf/volumes
+            cd ../..
         """
     }
 
     stage('Apply Terraform - Kubernetes') {
         sh """
-            pushd tf/kubernetes
+            cd tf/kubernetes
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -lock=false -auto-approve
-            popd tf/kubernetes
+            cd ../..
         """
     }
 
