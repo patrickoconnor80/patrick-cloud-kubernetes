@@ -1,26 +1,43 @@
 node {
-    def app
 
-    stage('Clone repository') {
+    stage('Clone Repository') {
         checkout scm
     }
 
-    stage('Update GIT') {
-            script {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        //def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
-                        sh "git config user.email patrickoconnor8014@gmail.com"
-                        sh "git config user.name patrickoconnor80"
-                        //sh "git switch master"
-                        sh "cat cfg/dbt.yaml"
-                        sh "sed -i 's+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs.*+948065143262.dkr.ecr.us-east-1.amazonaws.com/patrick-cloud-dev-dbt-docs:${DOCKERTAG}+g' cfg/dbt.yaml"
-                        sh "cat cfg/dbt.yaml"
-                        sh "git add ."
-                        sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
-                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/patrick-cloud-kubernetes.git HEAD:main"
-      }
+    stage('Checkov Scan') {
+       sh '''
+            export CHECKOV_OUTPUT_CODE_LINE_LIMIT=100
+            SKIPS=$(cat 'tf/.checkovignore.json' | jq -r 'keys[]' | sed 's/$/,/' | tr -d '\n' | sed 's/.$//')
+            [ ! -d "checkov_venv" ] && python3 -m venv checkov_venv
+            . checkov_venv/bin/activate
+            pip install checkov
+            checkov -d ./tf --skip-check $SKIPS --skip-path tf/.archive
+            deactivate
+        '''
     }
-  }
-}
+
+    stage('Apply Terraform - Volumes') {
+        sh """
+            cd tf/volumes
+            terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
+            terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -auto-approve
+            cd ../..
+        """
+    }
+
+    stage('Apply Terraform - EKS') {
+        sh """
+            cd tf/eks
+            terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
+            terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -auto-approve
+            cd ../..
+        """
+    }
+
+    stage('Apply Manifests for base infra') {
+        sh """
+            sh bin/k8s_apply_base_infra.sh
+        """
+    }
+
 }
