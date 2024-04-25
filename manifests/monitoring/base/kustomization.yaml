@@ -7,13 +7,13 @@ resources:
 helmCharts:
 - name: prometheus
   repo: https://prometheus-community.github.io/helm-charts
-  version: v.25.18.10
+  version: v25.20.1
   releaseName: prometheus
   namespace: monitoring
   valuesFile: helm-values/prometheus-values.yaml
 - name: grafana
   repo: https://grafana.github.io/helm-charts
-  version: v.7.3.7
+  version: v7.3.7
   releaseName: grafana
   namespace: monitoring
   valuesFile: helm-values/grafana-values.yaml

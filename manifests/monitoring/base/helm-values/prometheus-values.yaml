@@ -11,7 +11,7 @@ server:
   extraArgs:
     web.external-url: http://kubernetes.patrick-cloud.com/prometheus
     web.route-prefix: /
-extraScrapeConfigs:
+extraScrapeConfigs: |
   - job_name: 'jenkins'
     metrics_path: '/prometheus'
     static_configs:

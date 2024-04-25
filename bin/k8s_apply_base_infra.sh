@@ -6,8 +6,7 @@ sh bin/helm_repo_add.sh
 kubectl apply -f manifests/storage/storage-class.yaml
 
 # Install External Secrets so secrets from AWS Secrets Manager can be utilized
-helm list
-if ! helm list | grep -q external-secrets; then
+if ! helm list -n external-secrets | grep -q external-secrets; then
     helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
 fi
 
@@ -20,13 +19,25 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     -e "s/\vol-[0-9,A-Z]* #grafana-tag/$GRAFANA_PV #grafana-tag/" \
     manifests/monitoring/base/volumes.yaml  | kubectl apply -f -
 
-# Create Istio CRD's
+# Apply Istio CRD's
 istioctl install -y
+
+# Apply Argo CD CRD's
+kubectl apply -f manifests/argo-cd/argo-cd-crds.yaml
 
 # Apply Istio, Monitoring and ArgoCD
 ./kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
 ./kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
-./kustomize build --enable-helm manifests/argocd/base | kubectl apply -f -
+./kustomize build --enable-helm manifests/argo-cd/base | kubectl apply -f -
+
+# Create Certs
+export DOMAIN_NAME=patrick-cloud.com
+export PREFIX=kubernetes
+mkdir certs
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=$DOMAIN_NAME Inc./CN=$DOMAIN_NAME' -keyout certs/$DOMAIN_NAME.key -out certs/$DOMAIN_NAME.crt
+openssl req -out certs/$PREFIX.$DOMAIN_NAME.csr -newkey rsa:2048 -nodes -keyout certs/$PREFIX.$DOMAIN_NAME.key -subj "/CN=$PREFIX.$DOMAIN_NAME/O=hello world from $DOMAIN_NAME"
+openssl req -out certs/$PREFIX.$DOMAIN_NAME.csr -newkey rsa:2048 -nodes -keyout certs/$PREFIX.$DOMAIN_NAME.key -subj "/CN=$PREFIX.$DOMAIN_NAME/O=hello world from $DOMAIN_NAME"
+openssl x509 -req -days 365 -CA certs/$DOMAIN_NAME.crt -CAkey certs/$DOMAIN_NAME.key -set_serial 0 -in certs/$PREFIX.$DOMAIN_NAME.csr -out certs/$PREFIX.$DOMAIN_NAME.crt
 
 # Add TLS Secret for Istio Gateway
 if ! kubectl get secrets -n istio-system | grep -q patrick-cloud-certs; then
