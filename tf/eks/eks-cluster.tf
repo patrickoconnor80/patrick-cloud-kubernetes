@@ -6,7 +6,7 @@ resource "aws_eks_cluster" "this" {
   vpc_config {
     security_group_ids = [data.aws_security_group.eks_cluster.id]
     subnet_ids         = local.public_subnet_ids
-    public_access_cidrs = [data.aws_vpc.this.cidr_block]
+    public_access_cidrs = ["98.229.26.12/32"]
   }
 
   access_config {
