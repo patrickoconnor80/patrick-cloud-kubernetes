@@ -4,10 +4,12 @@ if ! ls | grep -q kustomize; then
 fi
 
 # Install Kustomize if not already installed in workspace
-if istioctl version; then
+if ! istioctl version ; then
+    echo "install istioctl"
     curl -L https://istio.io/downloadIstio | sh -
     export PATH=$PWD/bin:$PATH
 fi
+ls
 
 # Add helm repos
 sh bin/helm_repo_add.sh
@@ -43,6 +45,7 @@ kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
 # Create Certs
 export DOMAIN_NAME=patrick-cloud.com
 export PREFIX=kubernetes
+rm -rf certs
 mkdir certs
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=$DOMAIN_NAME Inc./CN=$DOMAIN_NAME' -keyout certs/$DOMAIN_NAME.key -out certs/$DOMAIN_NAME.crt
 openssl req -out certs/$PREFIX.$DOMAIN_NAME.csr -newkey rsa:2048 -nodes -keyout certs/$PREFIX.$DOMAIN_NAME.key -subj "/CN=$PREFIX.$DOMAIN_NAME/O=hello world from $DOMAIN_NAME"
