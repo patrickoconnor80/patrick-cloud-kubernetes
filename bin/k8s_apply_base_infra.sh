@@ -6,7 +6,9 @@ sh bin/helm_repo_add.sh
 kubectl apply -f manifests/storage/storage-class.yaml
 
 # Install External Secrets so secrets from AWS Secrets Manager can be utilized
-helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
+if ! helm list | grep -q external-secrets; then
+    helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
+fi
 
 # Update the volume ID's in the manifest
 ALERT_MANAGER_PROMETHEUS_PV=$(aws ec2 describe-volumes --filters Name=tag:Name,Values=patrick-cloud-eks-alert-manager-prometheus-pv | grep VolumeId | cut -d'"' -f 4)
@@ -18,12 +20,14 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     manifests/monitoring/base/volumes.yaml  | kubectl apply -f -
 
 # Apply Istio, Monitoring and ArgoCD
-kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
-kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
-kustomize build --enable-helm manifests/argocd/base | kubectl apply -f -
+./kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
+./kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
+./kustomize build --enable-helm manifests/argocd/base | kubectl apply -f -
 
 # Add TLS Secret for Istio Gateway
-kubectl create secret tls patrick-cloud-certs -n istio-system --key certs/kubernetes.patrick-cloud.com.key --cert certs/kubernetes.patrick-cloud.com.crt
+if ! kubectl get secrets -n istio-system | grep -q patrick-cloud-certs; then
+    kubectl create secret tls patrick-cloud-certs -n istio-system --key certs/kubernetes.patrick-cloud.com.key --cert certs/kubernetes.patrick-cloud.com.crt
+fi
 
 # Store Nodeport Exposed by Istio Gateway in AWS Parameter Store so it can be referenced by the ALB
 HTTPS_NODEPORT=$(kubectl describe svc -n istio-system istio-ingress | grep NodePort | grep https | grep -Eo '[0-9]{1,5}')
