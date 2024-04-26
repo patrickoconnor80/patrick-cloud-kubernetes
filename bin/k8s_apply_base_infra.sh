@@ -27,7 +27,7 @@ GRAFANA_PV=$(aws ec2 describe-volumes --filters Name=tag:Name,Values=patrick-clo
 sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEUS_PV #prometheus-alert-manager-tag/" \
     -e "s/\vol-[0-9,A-Z]* #prometheus-server-tag/$PROMETHEUS_SERVER_PV #prometheus-server-tag/" \
     -e "s/\vol-[0-9,A-Z]* #grafana-tag/$GRAFANA_PV #grafana-tag/" \
-    manifests/monitoring/base/volumes.yaml  | kubectl apply -f -
+    manifests/monitoring/base/volumes.yaml | tee manifests/monitoring/base/volumes.yaml
 
 # Apply Istio CRD's
 istioctl install -y

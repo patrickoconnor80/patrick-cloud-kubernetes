@@ -10,7 +10,7 @@ spec:
   - ReadWriteOnce
   awsElasticBlockStore:
     fsType: ext4
-    volumeID: vol-12345 #grafana-tag
+    volumeID: vol-070d1fc644d5fd710 #grafana-tag
   capacity:
     storage: 2Gi
   persistentVolumeReclaimPolicy: Retain
@@ -27,7 +27,7 @@ spec:
   - ReadWriteOnce
   awsElasticBlockStore:
     fsType: ext4
-    volumeID: vol-12345 #prometheus-alert-manager-tag
+    volumeID: vol-01bac9a96f0a172df #prometheus-alert-manager-tag
   capacity:
     storage: 2Gi
   persistentVolumeReclaimPolicy: Retain
@@ -44,7 +44,7 @@ spec:
   - ReadWriteOnce
   awsElasticBlockStore:
     fsType: ext4
-    volumeID: vol-43580492035 #prometheus-server-tag
+    volumeID: vol-0e3d3d0176410f6a0 #prometheus-server-tag
   capacity:
     storage: 8Gi
   persistentVolumeReclaimPolicy: Retain
