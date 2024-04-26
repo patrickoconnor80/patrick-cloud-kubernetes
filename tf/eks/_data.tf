@@ -12,7 +12,7 @@ data "aws_vpc" "this" {
 data "aws_subnets" "public_1b" {
   filter {
     name   = "tag:Name"
-    values = ["${local.prefix}-public-us-east-1b"]
+    values = ["${local.prefix}-public-us-east-1b-subnet"]
   }
 }
 
