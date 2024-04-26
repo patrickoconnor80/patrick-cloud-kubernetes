@@ -20,7 +20,7 @@ resource "aws_iam_role" "monitoring_external_secrets_sa" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "monitoring_external_secrets_sa" {

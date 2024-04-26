@@ -20,7 +20,7 @@ resource "aws_iam_role" "dbt_external_secrets_sa" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_policy" "dbt_external_secrets_sa" {

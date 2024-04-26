@@ -20,7 +20,7 @@ resource "aws_iam_role" "cloudwatch_readonly_sa" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 # Give read only access to application-autoscaling, autoscaling, cloudwatch, logs, oam, sns, rum, syntehtics, xray

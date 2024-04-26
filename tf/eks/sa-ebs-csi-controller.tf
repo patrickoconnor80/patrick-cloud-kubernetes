@@ -2,6 +2,7 @@ resource "aws_eks_addon" "this" {
   cluster_name = aws_eks_cluster.this.name
   addon_name   = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.this.arn
+  tags = local.tags
 }
 
 resource "aws_iam_role" "this" {
@@ -26,7 +27,7 @@ resource "aws_iam_role" "this" {
     ]
   })
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "AmazonEBSCSIDriverPolicy" {
