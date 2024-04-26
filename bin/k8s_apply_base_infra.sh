@@ -29,8 +29,10 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     -e "s/\vol-[0-9,A-Z]* #grafana-tag/$GRAFANA_PV #grafana-tag/" \
     manifests/monitoring/base/volumes.yaml | tee manifests/monitoring/base/volumes.yaml
 
+cat manifests/monitoring/base/volumes.yaml
+
 # Apply Istio CRD's
-istioctl install -y
+istioctl apply -f manifests/istio/base/istio-crds.yaml
 
 # Apply Argo CD CRD's
 kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
