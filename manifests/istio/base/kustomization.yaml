@@ -1,4 +1,5 @@
 resources:
+- istio-crds.yaml
 - namespace.yaml
 - istio-gateway.yaml
 - istio-peer-authentication.yaml
