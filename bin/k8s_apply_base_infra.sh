@@ -31,7 +31,7 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
 cp manifests/monitoring/base/volumes_.yaml manifests/monitoring/base/volumes.yaml
 
 # Apply Istio CRD's
-istioctl apply -f manifests/istio/base/istio-crds.yaml
+kubectl apply -f manifests/istio/base/istio-crds.yaml
 
 # Apply Argo CD CRD's
 kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml

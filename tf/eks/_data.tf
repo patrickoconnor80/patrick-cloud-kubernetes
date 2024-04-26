@@ -9,15 +9,15 @@ data "aws_vpc" "this" {
   }
 }
 
-data "aws_subnets" "public" {
+data "aws_subnets" "public_1b" {
   filter {
     name   = "tag:Name"
-    values = ["${local.prefix}-public-us-east-1*"]
+    values = ["${local.prefix}-public-us-east-1b"]
   }
 }
 
-data "aws_subnet" "public" {
-  for_each = toset(data.aws_subnets.public.ids)
+data "aws_subnet" "public_1b" {
+  for_each = toset(data.aws_subnets.public_1b.ids)
   id       = each.value
 }
 
