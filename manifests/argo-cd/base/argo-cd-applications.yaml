@@ -40,7 +40,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: grafana
+  name: grafana-prometheus-stack
   namespace: argocd
 spec:
   destination:
@@ -51,8 +51,6 @@ spec:
     path: manifests/monitoring/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
-    plugin:
-      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true
@@ -61,19 +59,17 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prometheus
+  name: argocd
   namespace: argocd
 spec:
   destination:
-    namespace: monitoring
+    namespace: argocd
     server: https://kubernetes.default.svc
   project: patrick-cloud-project
   source:
     path: manifests/argo-cd/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
-    plugin:
-      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true
@@ -93,8 +89,6 @@ spec:
     path: manifests/istio/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
-    plugin:
-      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true

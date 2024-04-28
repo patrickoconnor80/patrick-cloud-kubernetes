@@ -3,4 +3,4 @@ resources:
 - external-secrets.yaml
 - istio-virtual-services.yaml
 
-namespace: dbt-docs
+namespace: dbt

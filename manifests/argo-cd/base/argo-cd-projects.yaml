@@ -24,13 +24,13 @@ spec:
   destinations:
   - namespace: dbt-docs
     server: https://kubernetes.default.svc
-    name: dbt-docs
+    name: in-cluster
   - namespace: game-2048
     server: https://kubernetes.default.svc
-    name: game-2048
+    name: in-cluster
   - namespace: monitoring
     server: https://kubernetes.default.svc
-    name: monitoring
-  - namespace: istio
+    name: in-cluster
+  - namespace: istio-system
     server: https://kubernetes.default.svc
-    name: istio
+    name: in-cluster

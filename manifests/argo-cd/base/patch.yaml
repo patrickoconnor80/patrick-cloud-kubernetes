@@ -1,32 +1,10 @@
-# Use --insecure so Ingress can send traffic with HTTP
-# --bashref /argocd is the subpath like https://IP/argocd
----
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: release-name-argocd-server
-spec:
- template:
-   spec:
-     containers:
-     - command:
-       - argocd-server
-       - --staticassets
-       - /shared/app
-       - --repo-server
-       - argocd-repo-server:8081
-       - --dex-server
-       - http://argocd-dex-server:5556
-       - --logformat
-       - text
-       - --loglevel
-       - info
-       - --redis
-       - argocd-redis:6379
-       # New commands patched
-       - --insecure
-       - --basehref
-       - /argocd
-       - --rootpath
-       - /argocd
-       name: server
+  name: argocd-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  kustomize.buildOptions: --enable-helm

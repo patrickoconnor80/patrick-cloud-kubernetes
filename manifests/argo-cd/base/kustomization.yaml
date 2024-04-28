@@ -1,15 +1,22 @@
 resources:
-- argo-cd-crds.yaml
 - namespace.yaml
 - istio-virtual-services.yaml
 - argo-cd-projects.yaml
 - argo-cd-applications.yaml
+#- argo-cd-configmap.yaml
 
 helmCharts:
 - name: argo-cd
   repo: https://argoproj.github.io/argo-helm
   version: v6.7.15
   namespace: argocd
+  includeCRDs: true
+  valuesInline:
+    configs:
+      params:
+        server.rootpath: /argocd
+        server.basehref: /argocd
+        server.insecure: true
 
 patches:
 - path: patch.yaml
