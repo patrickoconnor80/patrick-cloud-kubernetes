@@ -1,0 +1,32 @@
+# Use --insecure so Ingress can send traffic with HTTP
+# --bashref /argocd is the subpath like https://IP/argocd
+# env was added because of https://github.com/argoproj/argo-cd/issues/3572 error
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-argocd-server
+spec:
+ template:
+   spec:
+     containers:
+     - args:
+       - argocd-server
+       - --staticassets
+       - /shared/app
+       - --repo-server
+       - argocd-repo-server:8081
+       - --dex-server
+       - http://argocd-dex-server:5556
+       - --logformat
+       - text
+       - --loglevel
+       - info
+       - --redis
+       - argocd-redis:6379
+       - --insecure
+       - --basehref
+       - /argocd
+       - --rootpath
+       - /argocd
+       name: server

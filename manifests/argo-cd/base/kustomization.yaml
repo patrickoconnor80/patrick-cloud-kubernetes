@@ -9,8 +9,17 @@ helmCharts:
 - name: argo-cd
   repo: https://argoproj.github.io/argo-helm
   version: v3.35.4
-  releaseName: argo-cd
   namespace: argocd
-  valuesFile: helm-values/argocd-values.yaml
+  #valuesFile: helm-values/argo-cd-values.yaml
+  valuesInline:
+    configs:
+      params:
+        server:
+          rootpath: /argocd
+          basehref: /argocd
+          insecure: true
+
+# patches:
+# - path: patch.yaml
 
 namespace: argocd

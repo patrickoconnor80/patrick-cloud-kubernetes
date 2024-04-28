@@ -20,4 +20,4 @@ spec:
     - destination:
         port:
           number: 80
-        host: argo-cd-argocd-server.argocd.svc.cluster.local
+        host: argocd-server.argocd.svc.cluster.local

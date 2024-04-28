@@ -39,7 +39,7 @@ kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
 # Apply Istio, Monitoring and ArgoCD
 ./kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
 ./kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
-./kustomize build --enable-helm manifests/argo-cd/base | kubectl apply -f -
+./kustomize build --enable-helm manifests/argo-cd/base | sed 's/release-name-//g' | kubectl apply -f -
 
 # Create Certs
 export DOMAIN_NAME=patrick-cloud.com
@@ -57,9 +57,9 @@ if ! kubectl get secrets -n istio-system | grep -q patrick-cloud-certs; then
 fi
 
 # Store Nodeport Exposed by Istio Gateway in AWS Parameter Store so it can be referenced by the ALB
-HTTPS_NODEPORT=$(kubectl describe svc -n istio-system istio-ingress | grep NodePort | grep https | grep -Eo '[0-9]{1,5}')
+HTTPS_NODEPORT=$(kubectl describe svc -n istio-system gateway | grep NodePort | grep https | grep -Eo '[0-9]{1,5}')
 aws ssm put-parameter --name KUBERNETES_ISTIO_GATEWAY_HTTPS_NODEPORT --value $HTTPS_NODEPORT --type "String" --overwrite
-STATUSPORT=$(kubectl describe svc -n istio-system istio-ingress | grep NodePort | grep status-port | grep -Eo '[0-9]{1,5}')
+STATUSPORT=$(kubectl describe svc -n istio-system gateway | grep NodePort | grep status-port | grep -Eo '[0-9]{1,5}')
 aws ssm put-parameter --name KUBERNETES_ISTIO_GATEWAY_STATUSPORT --value $STATUSPORT --type "String" --overwrite
 
 # Istio Gateway Pod fails because the IstioD pod isn't up and running before it finishes. Delete to restart pod when IstioD is ready
