@@ -51,6 +51,8 @@ spec:
     path: manifests/monitoring/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
+    plugin:
+      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true
@@ -70,6 +72,8 @@ spec:
     path: manifests/argo-cd/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
+    plugin:
+      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true
@@ -89,6 +93,8 @@ spec:
     path: manifests/istio/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
+    plugin:
+      name: kustomize-build-with-helm
   syncPolicy:
     automated:
       selfHeal: true

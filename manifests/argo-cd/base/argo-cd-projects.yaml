@@ -14,6 +14,11 @@ spec:
   sourceRepos:
   - 'https://github.com/patrickoconnor80/patrick-cloud-*'
 
+  # Allow all kubectl actions for now (TODO restrict permissiosn to least permissive)
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+
   # Only permit applications to deploy to the guestbook namespace in the same cluster
   # Destination clusters can be identified by 'server', 'name', or both.
   destinations:
