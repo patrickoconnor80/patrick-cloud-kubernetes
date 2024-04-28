@@ -20,9 +20,9 @@ spec:
   - namespace: dbt-docs
     server: https://kubernetes.default.svc
     name: dbt-docs
-  - namespace: 2048-game
+  - namespace: game-2048
     server: https://kubernetes.default.svc
-    name: 2048-game
+    name: game-2048
   - namespace: monitoring
     server: https://kubernetes.default.svc
     name: monitoring

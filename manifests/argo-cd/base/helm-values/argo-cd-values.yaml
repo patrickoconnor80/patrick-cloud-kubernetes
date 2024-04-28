@@ -1,7 +1,0 @@
-# Setting up a subpath on Istio - see documentation
-# https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#istio
-configs:
-  params:
-    server.rootpath: /argocd
-    server.basehref: /argocd
-    server.insecure: true

@@ -10,7 +10,7 @@ spec:
     server: https://kubernetes.default.svc
   project: patrick-cloud-project
   source:
-    path: manifests/apps/2048/
+    path: manifests/apps/2048/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
   syncPolicy:
@@ -29,7 +29,7 @@ spec:
     server: https://kubernetes.default.svc
   project: patrick-cloud-project
   source:
-    path: manifests/apps/dbt-docs/
+    path: manifests/apps/dbt-docs/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
   syncPolicy:
@@ -67,7 +67,7 @@ spec:
     server: https://kubernetes.default.svc
   project: patrick-cloud-project
   source:
-    path: manifests/argocd/base/
+    path: manifests/argo-cd/base/
     repoURL: https://github.com/patrickoconnor80/patrick-cloud-kubernetes.git
     targetRevision: main
   syncPolicy:
