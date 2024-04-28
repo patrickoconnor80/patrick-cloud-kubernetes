@@ -108,7 +108,6 @@ resource "aws_eks_access_policy_association" "console" {
 
 ## CLI ACCESS ##
 
-# Create cli as user in EKS
 resource "aws_eks_access_entry" "cli_root" {
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/root-aws-cli"
@@ -116,11 +115,27 @@ resource "aws_eks_access_entry" "cli_root" {
   type          = "STANDARD"
 }
 
-# Give root full cluster admin access
 resource "aws_eks_access_policy_association" "cli" {
   cluster_name  = aws_eks_cluster.this.name
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/root-aws-cli"
+
+  access_scope {
+    type = "cluster"
+  }
+}
+
+resource "aws_eks_access_entry" "jenkins" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-jenkins-ec2-role"
+  user_name     = "root_cli"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "jenkins" {
+  cluster_name  = aws_eks_cluster.this.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-jenkins-ec2-role"
 
   access_scope {
     type = "cluster"
