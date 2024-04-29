@@ -20,7 +20,7 @@ extraScrapeConfigs: |
   - job_name: 'node_exporter'
     static_configs:
     - targets: 
-      - localhost:9100
+      - prometheus-prometheus-node-exporter.monitoring.svc.cluster.local:9100
   - job_name: istiod
     kubernetes_sd_configs:
     - role: endpoints
@@ -39,6 +39,10 @@ extraScrapeConfigs: |
     - source_labels: [__meta_kubernetes_pod_container_port_name]
       action: keep
       regex: '.*-envoy-prom'
+  - job_name: grafana
+    static_configs:
+    - targets:
+      - grafana.monitoring.svc.cluster.local
 alertmanager:
   persistence:
     size: 2Gi

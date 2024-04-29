@@ -50,7 +50,7 @@ grafana.ini:
 
 # Gives Grafana access to use service account 
 env:
-  AWS_ROLE_ARN: arn:aws:iam::948065143262:role/patrick-cloud-eks-cloudwatch-readonly-sa-role
+  AWS_ROLE_ARN: arn:aws:iam::948065143262:role/patrick-cloud-dev-eks-cloudwatch-readonly-sa-role
   AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
   AWS_REGION: us-east-1
 extraSecretMounts:
@@ -68,4 +68,4 @@ serviceAccount:
   create: true
   name: cloudwatch-readonly-sa
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::948065143262:role/patrick-cloud-eks-cloudwatch-readonly-sa-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::948065143262:role/patrick-cloud-dev-eks-cloudwatch-readonly-sa-role
