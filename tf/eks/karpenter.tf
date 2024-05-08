@@ -9,13 +9,14 @@
 #---------------------------------------------------------------
 
 module "karpenter" {
-  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
-  version = "~> 20.8.5"
+  source = "https://github.com/terraform-aws-modules/terraform-aws-eks/eks/aws//modules/karpenter?ref=aeb9f0c990b259320a6c3e5ff93be3f064bb9238"
+#   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+#   version = "~> 20.8.5"
 
   cluster_name           = local.cluster_name
   irsa_oidc_provider_arn = aws_iam_openid_connect_provider.this.arn
   node_iam_role_additional_policies = {
-    additional_policy = module.karpenter_policy.arn
+    additional_policy = aws_iam_policy.karpenter_node.arn
   }
   iam_role_name = "${local.prefix}-eks-karp-controller"
   node_iam_role_name = "${local.prefix}-eks-karpenter-node"
@@ -27,10 +28,7 @@ module "karpenter" {
 # permissions we need for Ray Jobs to run until IRSA is added
 # upstream in kuberay-operator. See issue
 # https://github.com/ray-project/kuberay/issues/746
-module "karpenter_policy" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
-  version = "~> 5.20"
-
+resource "aws_iam_policy" "karpenter_node" {
   name        = "KarpenterS3ReadOnlyPolicy"
   description = "IAM Policy to allow read from an S3 bucket for karpenter nodes"
 
@@ -47,12 +45,14 @@ module "karpenter_policy" {
         {
           Sid      = "AllObjectActions"
           Effect   = "Allow"
-          Action   = "s3:Get*"
+          Action   = "s3:GetObject"
           Resource = ["arn:aws:s3:::air-example-data-2/*"]
         }
       ]
     }
   )
+
+  tags = local.tags
 }
 
 

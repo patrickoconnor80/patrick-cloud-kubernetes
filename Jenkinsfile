@@ -30,6 +30,7 @@ node {
             cd tf/eks
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -auto-approve
+            terraform output -json > ../../config/terraform_outputs/tf_outputs_network.json
             cd ../..
         """
     }
