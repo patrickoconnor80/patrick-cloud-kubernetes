@@ -32,9 +32,9 @@ node {
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -auto-approve
             
             EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)
-            EKS_CLUSTER_ENDPOINT=$(terraform output -raw eks_cluster_endpoint)
-            KARPENTER_QUEUE_NAME=$(terraform output -raw karpenter_queue_name)
-            KARPENTER_IAM_ROLE_ARN=$(terraform output -raw karpenter_iam_role_arn)
+            // EKS_CLUSTER_ENDPOINT=$(terraform output -raw eks_cluster_endpoint)
+            // KARPENTER_QUEUE_NAME=$(terraform output -raw karpenter_queue_name)
+            // KARPENTER_IAM_ROLE_ARN=$(terraform output -raw karpenter_iam_role_arn)
             cd ../..
         """
     }
