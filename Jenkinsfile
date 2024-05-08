@@ -30,6 +30,7 @@ node {
             cd tf/eks
             terraform init -backend-config=./env/${ENV}/backend.config -reconfigure
             terraform apply -var-file=./env/${ENV}/${ENV}.tfvars -auto-approve
+            
             export EKS_CLUSTER_NAME=$(terraform output -raw eks_cluster_name)
             export EKS_CLUSTER_ENDPOINT=$(terraform output -raw eks_cluster_endpoint)
             export KARPENTER_QUEUE_NAME=$(terraform output -raw karpenter_queue_name)
