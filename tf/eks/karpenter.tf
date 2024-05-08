@@ -9,7 +9,7 @@
 #---------------------------------------------------------------
 
 module "karpenter" {
-  source = "https://github.com/terraform-aws-modules/terraform-aws-eks/eks/aws//modules/karpenter?ref=aeb9f0c990b259320a6c3e5ff93be3f064bb9238"
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks//modules/karpenter?ref=aeb9f0c990b259320a6c3e5ff93be3f064bb9238"
 #   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
 #   version = "~> 20.8.5"
 
