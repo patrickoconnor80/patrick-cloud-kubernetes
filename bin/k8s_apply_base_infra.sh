@@ -36,10 +36,12 @@ kubectl apply -f manifests/istio/base/istio-crds.yaml
 # Apply Argo CD CRD's
 kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
 
-# Apply Istio, Monitoring and ArgoCD
-./kustomize build --enable-helm manifests/istio/base | kubectl apply -f -
-./kustomize build --enable-helm manifests/monitoring/base | kubectl apply -f -
-./kustomize build --enable-helm manifests/argo-cd/base | sed 's/release-name-//g' | kubectl apply -f -
+# Apply Istio, Monitoring, ArgoCD and Mlflow
+./kustomize build --enable-helm manifests/istio/overlays/$ENV | envsubst | kubectl apply -f -
+./kustomize build --enable-helm manifests/monitoring/overlays/$ENV | envsubst | kubectl apply -f -
+./kustomize build --enable-helm manifests/argo-cd/overlays/$ENV | sed 's/release-name-//g' | envsubst | kubectl apply -f -
+./kustomize build --enable-helm manifests/mlflow/overlays/$ENV | envsubst | kubectl apply -f -
+./kustomize build --enable-helm manifests/kubeflow/overlays/$ENV | envsubst | kubectl apply -f -
 
 # Create Certs
 export DOMAIN_NAME=patrick-cloud.com

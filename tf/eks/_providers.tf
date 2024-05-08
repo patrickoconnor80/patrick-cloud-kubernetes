@@ -20,6 +20,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Used for Karpenter Helm chart
+provider "aws" {
+  region = "us-east-1"
+  alias  = "ecr_public_region"
+}
+
 provider "http" {}
 
 provider "kubernetes" {

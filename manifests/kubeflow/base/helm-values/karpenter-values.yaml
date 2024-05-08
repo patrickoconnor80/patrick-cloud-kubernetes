@@ -1,0 +1,9 @@
+settings:
+  clusterName: $EKS_CLUSTER_NAME
+  clusterEndpoint: $EKS_CLUSTER_ENDPOINT
+  interruptionQueue: $KARPENTER_QUEUE_NAME
+serviceAccount:
+  create: true
+  name: karpenter-sa
+  annotations:
+    eks.amazonaws.com/role-arn: $KARPENTER_IAM_ROLE_ARN

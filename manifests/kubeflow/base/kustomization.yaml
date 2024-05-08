@@ -1,0 +1,53 @@
+resources:
+- karpenter.yaml
+
+helmCharts:
+- name: kuberay-operator
+  repo: https://ray-project.github.io/kuberay-helm/
+  version: v1.1.1
+  releaseName: kuberay-operator
+  namespace: ray-cluster
+
+- name: ray-cluster
+  repo: https://ray-project.github.io/kuberay-helm/
+  version: v1.1.1
+  releaseName: ray-cluster
+  namespace: ray-cluster
+
+- name: karpenter
+  repo: oci://public.ecr.aws/karpenter
+  version: v0.36.1
+  releaseName: karpenter
+  namespace: karpenter
+
+# - name: kubeflow-roles
+#   repo: https://github.com/aws-samples/amazon-eks-machine-learning-with-terraform-and-kubeflow/tree/master/charts/ml-platform/kubeflow-roles
+#   version: v1.0.0
+#   releaseName: kubeflow-roles
+#   namespace: kubeflow
+
+# - name: kubeflow-training-operator
+#   repo: https://github.com/aws-samples/amazon-eks-machine-learning-with-terraform-and-kubeflow/tree/master/charts/ml-platform/kubeflow-training-operator
+#   version: v1.0.0
+#   releaseName: kubeflow-training-operator
+
+# - name: kubeflow-admission-webhook
+#   repo: https://github.com/aws-samples/amazon-eks-machine-learning-with-terraform-and-kubeflow/tree/master/charts/ml-platform/kubeflow-admission-webhook
+#   version: v1.0.0
+#   releaseName: kubeflow-admission-webhook
+#   namespace: kubeflow
+
+# - name: kubeflow-profiles-and-kfam
+#   repo: https://github.com/aws-samples/amazon-eks-machine-learning-with-terraform-and-kubeflow/tree/master/charts/ml-platform/kubeflow-profiles-and-kfam
+#   version: v1.0.0
+#   releaseName: kubeflow-profiles-and-kfam
+#   namespace: kubeflow
+
+# - name: kubeflow-notebooks
+#   repo: https://github.com/aws-samples/amazon-eks-machine-learning-with-terraform-and-kubeflow/tree/master/charts/ml-platform/kubeflow-notebooks
+#   version: v1.0.0
+#   releaseName: kubeflow-notebooks
+#   namespace: kubeflow
+
+
+namespace: kubeflow

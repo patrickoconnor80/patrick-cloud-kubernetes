@@ -13,3 +13,6 @@ fi
 if ! helm repo list | grep -q argo; then
     helm repo add argo https://argoproj.github.io/argo-helm
 fi
+if ! helm repo list | grep -q kuberay; then
+    helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+fi

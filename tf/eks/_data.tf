@@ -61,12 +61,24 @@ data "aws_secretsmanager_secret" "databricks_host" {
   name = "DATABRICKS_HOST"
 }
 
+data "aws_secretsmanager_secret" "mlflow_tracking_uri" {
+  name = "MLFLOW_TRACKING_URI"
+}
+
+data "aws_secretsmanager_secret" "mlflow_tracking_password" {
+  name = "MLFLOW_TRACKING_PASSWORD"
+}
+
 data "aws_iam_policy" "databricks_workspace_secrets_kms_access" {
   name = "${local.prefix}-dataricks-workspace-secrets-kms-access"
 }
 
 data "aws_iam_policy" "databricks_account_secrets_kms_access" {
   name = "${local.prefix}-dataricks-account-secrets-kms-access"
+}
+
+data "aws_iam_policy" "mlflow_kms_access" {
+  name = "${local.prefix}-mlflow-kms-access"
 }
 
 data "aws_iam_role" "eks_cluster" {
@@ -83,4 +95,8 @@ data "aws_security_group" "eks_cluster" {
 
 data "aws_security_group" "jenkins" {
   name = "${local.prefix}-jenkins-sg"
+}
+
+data "aws_ecrpublic_authorization_token" "token" {
+  provider = aws.ecr_public_region
 }

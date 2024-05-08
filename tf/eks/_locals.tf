@@ -8,6 +8,6 @@ locals {
     Env        = var.env
     Project    = "patrick-cloud"
     Deployment = "terraform"
-    Repo       = "https://github.com/patrickoconnor80/patrick-cloud-kubernetes/tree/main/tf/eks"
+    Repo       = "https://github.com/patrickoconnor80/patrick-cloud-machine-learning/tree/main/tf"
   }
 }

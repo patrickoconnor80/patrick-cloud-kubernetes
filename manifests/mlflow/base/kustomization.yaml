@@ -1,0 +1,13 @@
+resources:
+- external-secrets.yaml
+- istio-virtual-services.yaml
+
+helmCharts:
+- name: mlflow
+  repo: https://community-charts.github.io/helm-charts
+  version: v0.7.19
+  releaseName: mlflow
+  namespace: mlflow
+  valuesFile: helm-values/mlflow-values.yaml
+
+namespace: mlflow
