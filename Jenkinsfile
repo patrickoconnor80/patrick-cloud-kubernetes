@@ -41,6 +41,15 @@ node {
             export EKS_CLUSTER_ENDPOINT=$(terraform output -raw eks_cluster_endpoint)
             export KARPENTER_QUEUE_NAME=$(terraform output -raw karpenter_queue_name)
             export KARPENTER_IAM_ROLE_ARN=$(terraform output -raw karpenter_iam_role_arn)
+            export KARPENTER_INSTANCE_PROFILE_NAME=$(terraform output -raw karpenter_instance_profile_name)
+            cd ../..
+        '''
+    }
+
+    stage('Output Terraform - Volumes') {
+        sh '''
+            cd tf/volumes
+            export EFS_DNS_NAME=$(terraform output -raw efs_dns_name)
             cd ../..
         '''
     }

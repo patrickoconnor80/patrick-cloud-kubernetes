@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::$ACCOUNT_ID:role/patrick-cloud-$ENV-eks-node-role
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+      - system:bootstrappers
+      - system:nodes
+    - rolearn: $KARPENTER_IAM_ROLE_ARN
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+      - system:bootstrappers
+      - system:nodes
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system

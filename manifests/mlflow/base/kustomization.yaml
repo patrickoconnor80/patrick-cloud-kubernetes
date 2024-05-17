@@ -1,4 +1,5 @@
 resources:
+- namespace.yaml
 - external-secrets.yaml
 - istio-virtual-services.yaml
 

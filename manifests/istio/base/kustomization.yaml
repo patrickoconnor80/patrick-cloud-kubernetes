@@ -1,31 +1,37 @@
 resources:
-- istio-crds.yaml
 - namespace.yaml
 - istio-gateway.yaml
 - istio-peer-authentication.yaml
 - istio-virtual-services.yaml
-- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
-- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/jaeger.yaml
-- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/prometheus.yaml
-- https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/grafana.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/kiali.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/jaeger.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/prometheus.yaml
+- https://raw.githubusercontent.com/istio/istio/release-1.21/samples/addons/grafana.yaml
   
 helmCharts:
 - name: base
   repo: https://istio-release.storage.googleapis.com/charts
-  version: v1.21.0
+  version: v1.21.1
   releaseName: base
+  includeCRDs: true
   namespace: istio-system
 - name: istiod
   repo: https://istio-release.storage.googleapis.com/charts
-  version: v1.21.0
+  version: v1.21.1
   releaseName: istiod
+  includeCRDs: true
   namespace: istio-system
   valuesInline:
     meshConfig:
+      defaultConfig:
+        runtimeValues:
+          envoy.reloadable_features.sanitize_te: "false"
       accessLogFile: /dev/stdout
+      meshMTLS:
+        minProtocolVersion: TLSV1_3
 - name: gateway
   repo: https://istio-release.storage.googleapis.com/charts
-  version: v1.21.0
+  version: v1.21.1
   releaseName: gateway
   namespace: istio-system
   valuesInline:

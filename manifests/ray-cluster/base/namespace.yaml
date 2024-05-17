@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ray-cluster
+  labels:
+    istio-injection : enabled

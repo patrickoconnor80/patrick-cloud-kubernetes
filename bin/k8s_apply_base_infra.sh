@@ -16,9 +16,9 @@ sh bin/helm_repo_add.sh
 kubectl apply -f manifests/storage/storage-class.yaml
 
 # Install External Secrets so secrets from AWS Secrets Manager can be utilized
-if ! helm list -n external-secrets | grep -q external-secrets; then
-    helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
-fi
+# if ! helm list -n external-secrets | grep -q external-secrets; then
+#     helm install external-secrets external-secrets/external-secrets -n external-secrets --create-namespace
+# fi
 
 # Update the volume ID's in the manifest
 ALERT_MANAGER_PROMETHEUS_PV=$(aws ec2 describe-volumes --filters Name=tag:Name,Values=patrick-cloud-eks-alert-manager-prometheus-pv | grep VolumeId | cut -d'"' -f 4)
@@ -30,18 +30,15 @@ sed -e "s/\vol-[0-9,A-Z]* #prometheus-alert-manager-tag/$ALERT_MANAGER_PROMETHEU
     manifests/monitoring/base/volumes.yaml | tee manifests/monitoring/base/volumes_.yaml
 cp manifests/monitoring/base/volumes_.yaml manifests/monitoring/base/volumes.yaml
 
-# Apply Istio CRD's
-kubectl apply -f manifests/istio/base/istio-crds.yaml
-
-# Apply Argo CD CRD's
-kubectl apply -f manifests/argo-cd/base/argo-cd-crds.yaml
-
-# Apply Istio, Monitoring, ArgoCD and Mlflow
-./kustomize build --enable-helm manifests/istio/overlays/$ENV | envsubst | kubectl apply -f -
-./kustomize build --enable-helm manifests/monitoring/overlays/$ENV | envsubst | kubectl apply -f -
-./kustomize build --enable-helm manifests/argo-cd/overlays/$ENV | sed 's/release-name-//g' | envsubst | kubectl apply -f -
-./kustomize build --enable-helm manifests/mlflow/overlays/$ENV | envsubst | kubectl apply -f -
-./kustomize build --enable-helm manifests/kubeflow/overlays/$ENV | envsubst | kubectl apply -f -
+# Apply all resources via kustomize
+./kustomize build --enable-helm manifests/general/overlays/$ENV | envsubst '$(env|grep "$ACCOUNT_ID\|$ENV\\$KARPENTER_IAM_ROLE_ARN\n")' | kubectl apply -f -
+./kustomize build --enable-helm manifests/istio/overlays/$ENV | kubectl apply -f -
+./kustomize build --enable-helm manifests/monitoring/overlays/$ENV | envsubst '$(env|grep "$ACCOUNT_ID\|$ENV")' | kubectl apply -f -
+./kustomize build --enable-helm manifests/argo-cd/overlays/$ENV | sed 's/release-name-//g' | kubectl apply -f -
+./kustomize build --enable-helm manifests/mlflow/overlays/$ENV | envsubst '$(env|grep "$ACCOUNT_ID\|$ENV")' | kubectl apply -f -
+./kustomize build --enable-helm manifests/ray-cluster/overlays/$ENV | kubectl create -f -
+./kustomize build --enable-helm manifests/jupyterhub/overlays/$ENV | envsubst '$(env|grep "$ACCOUNT_ID\|$ENV\|$EFS_DNS_NAME")' | kubectl apply -f -
+./kustomize build --enable-helm manifests/karpenter/overlays/$ENV | envsubst '$(env|grep "$ACCOUNT_ID\|$ENV\|$EKS_CLUSTER_NAME\|$EKS_CLUSTER_ENDPOINT\|$KARPENTER_QUEUE_NAME\|$KARPENTER_IAM_ROLE_ARN\|$KARPENTER_INSTANCE_PROFILE_NAME")' | kubectl apply -f -
 
 # Create Certs
 export DOMAIN_NAME=patrick-cloud.com

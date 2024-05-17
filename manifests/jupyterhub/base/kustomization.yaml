@@ -1,0 +1,18 @@
+resources:
+- namespace.yaml
+- serviceaccount.yaml
+- pv.yaml
+- istio-virtual-services.yaml
+- istio-peer-authentication.yaml
+
+helmCharts:
+
+- name: jupyterhub
+  repo: https://jupyterhub.github.io/helm-chart/
+  version: v3.3.7
+  releaseName: jupyterhub
+  includeCRDs: true
+  valuesFile: helm-values/jupyterhub-values.yaml
+  namespace: jupyterhub
+
+namespace: jupyterhub

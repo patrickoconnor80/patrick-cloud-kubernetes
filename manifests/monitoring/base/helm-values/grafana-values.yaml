@@ -47,10 +47,12 @@ grafana.ini:
   aws:
     allowed_auth_providers: ec2_iam_role, default
     assume_role_enabled: true
+  security:
+      allow_embedding: true
 
 # Gives Grafana access to use service account 
 env:
-  AWS_ROLE_ARN: arn:aws:iam::948065143262:role/patrick-cloud-dev-eks-cloudwatch-readonly-sa-role
+  AWS_ROLE_ARN: arn:aws:iam::$ACCOUNT_ID:role/patrick-cloud-$ENV-eks-cloudwatch-readonly-sa-role
   AWS_WEB_IDENTITY_TOKEN_FILE: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
   AWS_REGION: us-east-1
 extraSecretMounts:
@@ -68,4 +70,27 @@ serviceAccount:
   create: true
   name: cloudwatch-readonly-sa
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::948065143262:role/patrick-cloud-dev-eks-cloudwatch-readonly-sa-role
+    eks.amazonaws.com/role-arn: arn:aws:iam::$ACCOUNT_ID:role/patrick-cloud-$ENV-eks-cloudwatch-readonly-sa-role
+testFramework:
+  enabled: false
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+dashboards:
+  default:
+    karpenter-capacity-dashboard:
+      url: https://karpenter.sh/preview/getting-started/getting-started-with-karpenter/karpenter-capacity-dashboard.json
+    karpenter-performance-dashboard:
+      url: https://karpenter.sh/preview/getting-started/getting-started-with-karpenter/karpenter-performance-dashboard.json
+
+
+     

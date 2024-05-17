@@ -1,8 +1,10 @@
-resource "aws_eks_node_group" "this" {
+resource "aws_eks_node_group" "default" {
   cluster_name    = aws_eks_cluster.this.name
-  node_group_name = "${local.prefix}-node-group"
+  node_group_name = "${local.prefix}-default-node-group"
   node_role_arn   = data.aws_iam_role.eks_node.arn
-  subnet_ids      = [local.public_1b_subnet_ids[0]] # Keep to 1 AZ so PV's don't have to be spread across AZs - us-east-1b
+  subnet_ids      = [
+    local.eks_node_group_subnet_ids[0] # Keep to 1 AZ so PV's don't have to be spread across AZs - us-east-1b
+  ] 
 
   scaling_config {
     desired_size = 1
@@ -21,6 +23,20 @@ resource "aws_eks_node_group" "this" {
   tags = local.tags
 }
 
+resource "aws_autoscaling_group_tag" "default" {    
+  autoscaling_group_name = aws_eks_node_group.default.resources[0].autoscaling_groups[0].name
+
+  tag {
+    key   = "Name"
+    value = "eks-default-node-group-instance"
+
+    propagate_at_launch = true
+  }
+
+  depends_on = [
+    aws_eks_node_group.default
+  ]
+}
 
 ## IAM POLCIY ATTACHMENTS ##
 

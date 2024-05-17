@@ -14,13 +14,15 @@ module "karpenter" {
 #   version = "~> 20.8.5"
 
   cluster_name           = local.cluster_name
+  enable_irsa = true
+  irsa_namespace_service_accounts = ["karpenter:karpenter-sa"]
   irsa_oidc_provider_arn = aws_iam_openid_connect_provider.this.arn
   node_iam_role_additional_policies = {
     additional_policy = aws_iam_policy.karpenter_node.arn
   }
   iam_role_name = "${local.prefix}-eks-karp-controller"
   node_iam_role_name = "${local.prefix}-eks-karpenter-node"
-
+  create_instance_profile = true
   tags = local.tags
 }
 

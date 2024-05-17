@@ -1,8 +1,8 @@
 locals {
   prefix             = "patrick-cloud-${var.env}"
-  public_subnet_ids  = [for subnet in data.aws_subnet.public : subnet.id]
-  private_subnet_ids = [for subnet in data.aws_subnet.private : subnet.id]
-  public_1b_subnet_ids  = [for subnet in data.aws_subnet.public_1b : subnet.id]
+  eks_control_plane_subnet_ids  = [for subnet in data.aws_subnet.eks_control_plane : subnet.id]
+  eks_node_group_subnet_ids = [for subnet in data.aws_subnet.eks_node_group : subnet.id]
+  eks_ray_subnet_ids  = [for subnet in data.aws_subnet.ray : subnet.id]
   cluster_name       = "${local.prefix}-eks-cluster"
   tags = {
     Env        = var.env

@@ -1,0 +1,92 @@
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: rayservice
+  namespace: ray-cluster
+spec:
+  serviceUnhealthySecondThreshold: 900
+  deploymentUnhealthySecondThreshold: 300
+  # serveConfigV2 takes a yaml multi-line scalar, which should be a Ray Serve multi-application config. See https://docs.ray.io/en/latest/serve/multi-app.html.
+  serveConfigV2: |
+    applications:
+      - name: text_ml_app
+        import_path: text_ml:app
+        route_prefix: /
+        runtime_env:
+          working_dir: "https://github.com/patrickoconnor80/patrick-cloud-machine-learning/archive/refs/heads/main.zip"
+          pip:
+            - torch
+            - transformers
+        deployments:
+          - name: Translator
+            num_replicas: 1
+            ray_actor_options:
+              num_cpus: 0.2
+            user_config:
+              language: french
+          - name: Summarizer
+            num_replicas: 1
+            ray_actor_options:
+              num_cpus: 0.2
+  rayClusterConfig:
+    rayVersion: '2.21.0'
+    headGroupSpec:
+      rayStartParams:
+        dashboard-host: '0.0.0.0'
+      template:
+        spec:
+          containers:
+            - name: ray-head
+              image: rayproject/ray-ml:2.21.0-cpu
+              resources:
+                limits:
+                  cpu: 2
+                  memory: 4Gi
+                requests:
+                  cpu: 2
+                  memory: 4Gi
+              ports:
+                - containerPort: 6379
+                  name: gcs-server
+                - containerPort: 8265
+                  name: dashboard
+                - containerPort: 10001
+                  name: client
+                - containerPort: 8000
+                  name: serve
+          nodeSelector:
+            NodePool: ray-service-head
+          tolerations:
+            - key: cluster-name
+              value: ray-service-head
+              operator: "Equal"
+              effect: NoSchedule
+    workerGroupSpecs:
+      - replicas: 1
+        minReplicas: 1
+        maxReplicas: 5
+        groupName: small-group
+        rayStartParams: {}
+        template:
+          spec:
+            containers:
+              - name: ray-worker
+                image: rayproject/ray-ml:2.21.0-cpu
+                lifecycle:
+                  preStop:
+                    exec:
+                      command: ["/bin/sh","-c","ray stop"]
+                resources:
+                  limits:
+                    cpu: "2"
+                    memory: "4Gi"
+                  requests:
+                    cpu: "2"
+                    memory: "4Gi"
+            nodeSelector:
+              NodePool: ray-service-worker
+            tolerations:
+              - key: cluster-name
+                value: ray-service-worker
+                operator: "Equal"
+                effect: NoSchedule

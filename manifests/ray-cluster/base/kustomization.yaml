@@ -1,0 +1,24 @@
+resources:
+- namespace.yaml
+- ray-service.yaml
+- istio-virtual-services.yaml
+- istio-peer-authentication.yaml
+
+helmCharts:
+- name: kuberay-operator
+  repo: https://ray-project.github.io/kuberay-helm/
+  version: v1.1.0
+  releaseName: kuberay-operator
+  includeCRDs: true
+  valuesFile: helm-values/kube-ray-values.yaml
+  namespace: ray-cluster
+
+- name: ray-cluster
+  repo: https://ray-project.github.io/kuberay-helm/
+  version: v1.1.0
+  releaseName: ray-cluster
+  includeCRDs: true
+  valuesFile: helm-values/ray-cluster-values.yaml
+  namespace: ray-cluster
+
+namespace: ray-cluster

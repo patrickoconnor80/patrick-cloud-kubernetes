@@ -1,6 +1,6 @@
 image:
   repository: rayproject/ray-ml
-  tag: 2.21.0
+  tag: 2.21.0-cpu
   pullPolicy: IfNotPresent
 head:
   enableInTreeAutoscaling: true
@@ -11,13 +11,16 @@ head:
     requests:
       cpu: 4
       memory: 12G
+  nodeSelector:
+    NodePool: ray-cluster-head
   tolerations:
-  - key: ray-cluster
+  - key: cluster-name
+    value: ray-cluster-head
+    operator: "Equal"
     effect: NoSchedule
-    operator: Exists
   containerEnv:
   - name: RAY_LOG_TO_STDERR
-    value: 1
+    value: "1"
   - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
     value: python
 worker:
@@ -28,15 +31,18 @@ worker:
     requests:
       cpu: 4
       memory: 12G
+  nodeSelector:
+    NodePool: ray-cluster-worker
   tolerations:
-  - key: ray-cluster
+  - key: cluster-name
+    value: ray-cluster-worker
+    operator: "Equal"
     effect: NoSchedule
-    operator: Exists
   containerEnv:
   - name: RAY_LOG_TO_STDERR
-    value: 1
+    value: "1"
   - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
     value: python
-  replicas: 0
-  minReplicas: 0
-  maxReplicas: 30
+  replicas: 1
+  minReplicas: 1
+  maxReplicas: 3

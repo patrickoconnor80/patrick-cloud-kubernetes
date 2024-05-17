@@ -1,0 +1,166 @@
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: ray-cluster-head
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodePool: ray-cluster-head
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+      nodeClassRef:
+        name: default
+      taints:
+      - key: cluster-name
+        value: ray-cluster-head
+        effect: NoSchedule
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: ray-cluster-worker
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodePool: ray-cluster-worker
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+      nodeClassRef:
+        name: default
+      taints:
+      - key: cluster-name
+        value: ray-cluster-worker
+        effect: NoSchedule
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: ray-service-head
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodePool: ray-service-head
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+      nodeClassRef:
+        name: default
+      taints:
+      - key: cluster-name
+        value: ray-service-head
+        effect: NoSchedule
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: ray-service-worker
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodePool: ray-service-worker
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+      nodeClassRef:
+        name: default
+      taints:
+      - key: cluster-name
+        value: ray-service-worker
+        effect: NoSchedule
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: jupyterhub
+spec:
+  template:
+    metadata:
+      labels:
+        type: karpenter
+        NodePool: jupyterhub
+        hub.jupyter.org/node-purpose: user
+    spec:
+      requirements:
+        - key: "kubernetes.io/arch"
+          operator: In
+          values: ["amd64"]
+      nodeClassRef:
+        name: default
+      taints:
+      - key: hub.jupyter.org/dedicated
+        value: user
+        effect: NoSchedule
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 * 24h = 720h
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiFamily: AL2 # Amazon Linux 2
+  instanceProfile: $KARPENTER_INSTANCE_PROFILE_NAME
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: $EKS_CLUSTER_NAME
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: $EKS_CLUSTER_NAME
+  tags:
+    app.kubernetes.io/created-by: patrick-cloud-$ENV
+  amiSelectorTerms:
+    - id: ami-0b54318913c8316f5
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 50Gi
+        volumeType: gp3
+        iops: 10000
+        deleteOnTermination: true
+        throughput: 125

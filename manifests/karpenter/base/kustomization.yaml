@@ -1,0 +1,12 @@
+resources:
+- namespace.yaml
+- karpenter.yaml
+
+helmCharts:
+- name: karpenter
+  repo: oci://public.ecr.aws/karpenter
+  version: 0.36.1
+  releaseName: karpenter
+  includeCRDs: true
+  valuesFile: helm-values/karpenter-values.yaml
+  namespace: karpenter

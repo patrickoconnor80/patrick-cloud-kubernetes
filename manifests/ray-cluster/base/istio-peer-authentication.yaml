@@ -1,0 +1,9 @@
+# Worker can't communicate with Head unless mTLS turned off
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: ray-cluster
+  namespace: ray-cluster
+spec:
+  mtls:
+    mode: PERMISSIVE

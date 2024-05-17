@@ -1,0 +1,23 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: jupyterhub
+  namespace: jupyterhub
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: jupyterhub
+    match:
+    - uri:
+        prefix: "/jupyter/"
+    rewrite:
+       uri: "/jupyter/"
+    route:
+    - destination:
+        port:
+          number: 80
+        host: proxy-public.jupyterhub.svc.cluster.local

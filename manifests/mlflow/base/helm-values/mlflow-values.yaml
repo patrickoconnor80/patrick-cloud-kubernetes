@@ -9,15 +9,12 @@ backendStore:
 artifactRoot:
   s3:
     enabled: true
-    bucket: s3:://patrick-cloud-$ENV-mlflow-artifact-root
+    bucket: patrick-cloud-$ENV-mlflow-artifact-root
 extraSecretNamesForEnvFrom:
-- name: MLFLOW_TRACKING_URI
-  valueFrom:
-    secretKeyRef:
-      name: mlfow-tracking-uri
-      key: MLFLOW_TRACKING_URI
-- name: MLFLOW_TRACKING_PASSWORD
-  valueFrom:
-    secretKeyRef:
-      name: mlfow-tracking-password
-      key: MLFLOW_TRACKING_PASSWORD
+- mlflow-tracking-uri
+- mlflow-tracking-password
+serviceAccount:
+  create: true
+  name: mlflow-sa
+  annotations: 
+    eks.amazonaws.com/role-arn: arn:aws:iam::$ACCOUNT_ID:role/patrick-cloud-$ENV-eks-mlflow-sa-role

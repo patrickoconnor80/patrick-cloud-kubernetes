@@ -53,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "mlflow_external_secrets_sa" {
 }
 
 # Policy found at patrick-cloud-machine-learning/tf/mlflow/secrets_manager.tf:aws_iam_policy.secrets_kms_access
-resource "aws_iam_role_policy_attachment" "mlflow_kms_access" {
-  policy_arn = data.aws_iam_policy.mlflow_kms_access.arn
+resource "aws_iam_role_policy_attachment" "mlflow_secrets_kms_access" {
+  policy_arn = data.aws_iam_policy.mlflow_secrets_kms_access.arn
   role       = aws_iam_role.mlflow_external_secrets_sa.name
 }

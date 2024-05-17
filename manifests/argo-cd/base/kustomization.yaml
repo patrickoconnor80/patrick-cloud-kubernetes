@@ -3,7 +3,6 @@ resources:
 - istio-virtual-services.yaml
 - argo-cd-projects.yaml
 - argo-cd-applications.yaml
-#- argo-cd-configmap.yaml
 
 helmCharts:
 - name: argo-cd

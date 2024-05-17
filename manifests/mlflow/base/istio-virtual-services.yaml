@@ -19,5 +19,5 @@ spec:
     route:
     - destination:
         port:
-          number: 80
-        host: service-mlflow.mlflow.svc.cluster.local
+          number: 5000
+        host: mlflow.mlflow.svc.cluster.local

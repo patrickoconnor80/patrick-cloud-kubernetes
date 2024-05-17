@@ -1,0 +1,105 @@
+hub:
+  baseUrl: /jupyter
+  db:
+    pvc:
+      storageClassName: gp2
+  authenticatePrometheus: false
+debug:
+  enabled: true
+proxy:
+  https:
+    enabled: false
+    type: offload
+  service:
+    type: ClusterIP
+singleuser:
+  startTimeout: 1200 # 20 mins to spin up a notebook server for GPU including the image pull
+  profileList:
+    - display_name: Data Engineering
+      description: "PySpark Notebooks | Karpenter AutoScaling"
+      profile_options:
+        image:
+          display_name: "Image"
+          choices:
+            pyspark351:
+              display_name: "PySpark 3.5.1 | Python 3.11.9"
+              default: true
+              kubespawner_override:
+                image: quay.io/jupyter/pyspark-notebook:spark-3.5.1
+            pyspark350:
+              display_name: "PySpark 3.5.0 | Python 3.11.9"
+              kubespawner_override:
+                image: quay.io/jupyter/pyspark-notebook:spark-3.5.0
+                http_timeout: 600
+      kubespawner_override:
+        node_selector:
+          NodePool: jupyterhub
+        tolerations:
+          - key: "hub.jupyter.org/dedicated" # According to optimization docs https://z2jh.jupyter.org/en/latest/administrator/optimization.html
+            operator: "Equal"
+            value: "user"
+            effect: "NoSchedule"
+        cpu_guarantee: 2
+        mem_guarantee: 8G
+        cpu_limit: 4
+        mem_limit: 8G
+      cmd: null
+    - display_name: Data Science
+      default: true
+      description: "Data Science notebook | Karpenter AutoScaling | Python 3.11.9"
+      kubespawner_override:
+        image: quay.io/jupyter/datascience-notebook:python-3.11.9
+        node_selector:
+          NodePool: jupyterhub
+        tolerations:
+          - key: "hub.jupyter.org/dedicated" # According to optimization docs https://z2jh.jupyter.org/en/latest/administrator/optimization.html
+            operator: "Equal"
+            value: "user"
+            effect: "NoSchedule"
+        cpu_limit: 2
+        mem_limit: 4G
+        cpu_guarantee: 2
+        mem_guarantee: 4G
+        cmd: "start-singleuser.sh"
+  storage:
+    type: "static"
+    static:
+      pvcName: "efs-persist"
+      subPath: "home/{username}"
+  serviceAccountName: jupyterhub-sa
+  allowPrivilegeEscalation: true
+  extraPodConfig: # This is needed for Jovyan user running in every single pod, access the Service Account
+    securityContext:
+        fsGroup: 100
+  extraEnv: # Sudo needed to configure the proper permissions to start the notebook instance
+    GRANT_SUDO: "yes"
+    NOTEBOOK_ARGS: "--allow-root"
+    CHOWN_HOME: "yes"
+    CHOWN_HOME_OPTS: "-R"
+  uid: 0
+  fsGid: 0
+  cmd: null
+  #defaultUrl: kubernetes.patrick-cloud.com
+
+# Optimizations configured according to this doc https://z2jh.jupyter.org/en/latest/administrator/optimization.html
+scheduling:
+  userScheduler:
+    enabled: false
+  podPriority:
+    enabled: true
+  userPlaceholder:
+    enabled: false
+    replicas: 1
+  userPods:
+    nodeAffinity:
+      matchNodePurpose: require # This will force single-user pods to use an specific karpenter provisioner
+
+prePuller:
+  hook:
+    enabled: false
+  continuous:
+    # NOTE: if used with Karpenter, also add user-placeholders
+    enabled: false
+
+global:
+  safeToShowValues: false

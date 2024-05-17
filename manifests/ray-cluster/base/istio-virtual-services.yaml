@@ -1,0 +1,115 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ray-cluster-dashboard
+  namespace: ray-cluster
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: ray-cluster-dashboard
+    match:
+    - uri:
+        prefix: "/ray-cluster-dashboard/"
+    rewrite:
+       uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8265
+        host: ray-cluster-kuberay-head-svc.ray-cluster.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ray-cluster-gcs
+  namespace: ray-cluster
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: ray-cluster-gcs
+    match:
+    - uri:
+        prefix: "/ray-cluster-gcs/"
+    rewrite:
+       uri: "/"
+    route:
+    - destination:
+        port:
+          number: 637
+        host: ray-cluster-kuberay-head-svc.ray-cluster.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ray-cluster-client
+  namespace: ray-cluster
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: ray-cluster-client
+    match:
+    - uri:
+        prefix: "/ray-cluster-client/"
+    rewrite:
+       uri: "/"
+    route:
+    - destination:
+        port:
+          number: 10001
+        host: ray-cluster-kuberay-head-svc.ray-cluster.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ray-service-dashboard
+  namespace: ray-cluster
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: ray-service-dashboard
+    match:
+    - uri:
+        prefix: "/ray-service-dashboard/"
+    rewrite:
+       uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8265
+        host: rayservice-head-svc.ray-cluster.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ray-service-serve
+  namespace: ray-cluster
+spec:
+  hosts:
+  - "kubernetes.patrick-cloud.com"
+  gateways:
+  - istio-system/patrick-cloud-gateway
+  http:
+  - name: ray-service-serve
+    match:
+    - uri:
+        prefix: "/ray-service-serve/"
+    rewrite:
+       uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: rayservice-serve-svc.ray-cluster.svc.cluster.local

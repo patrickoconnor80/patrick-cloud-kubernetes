@@ -5,7 +5,7 @@ resource "aws_eks_cluster" "this" {
 
   vpc_config {
     security_group_ids      = [data.aws_security_group.eks_cluster.id]
-    subnet_ids              = local.public_subnet_ids
+    subnet_ids              = local.eks_control_plane_subnet_ids
     endpoint_private_access = true
     endpoint_public_access  = true
     public_access_cidrs     = ["98.229.26.12/32"]
@@ -83,6 +83,15 @@ resource "aws_security_group_rule" "ingress_jenkins" {
   source_security_group_id = data.aws_security_group.jenkins.id
 }
 
+resource "aws_security_group_rule" "ingress_ray_cluster" {
+  security_group_id        = data.aws_security_group.eks_node_group.id
+  description              = "Allow Ray Cluster to commmunitcate with EKS Node Group"
+  type                     = "ingress"
+  protocol                 = -1
+  from_port                = 0
+  to_port                  = 0
+  source_security_group_id = data.aws_security_group.ray_cluster.id
+}
 
 ## CONSOLE ACCESS ##
 
@@ -128,7 +137,7 @@ resource "aws_eks_access_policy_association" "console" {
 resource "aws_eks_access_entry" "jenkins" {
   cluster_name  = aws_eks_cluster.this.name
   principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.prefix}-jenkins-ec2-role"
-  user_name     = "root_cli"
+  user_name     = "jenkins"
   type          = "STANDARD"
 }
 
@@ -141,3 +150,20 @@ resource "aws_eks_access_policy_association" "jenkins" {
     type = "cluster"
   }
 }
+
+# resource "aws_eks_access_entry" "ray_cluster" {
+#   cluster_name  = aws_eks_cluster.this.name
+#   principal_arn = module.karpenter.node_iam_role_arn
+#   user_name     = "ray_cluster"
+#   type          = "STANDARD"
+# }
+
+# resource "aws_eks_access_policy_association" "ray_cluster" {
+#   cluster_name  = aws_eks_cluster.this.name
+#   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+#   principal_arn = module.karpenter.node_iam_role_arn
+
+#   access_scope {
+#     type = "cluster"
+#   }
+# }
